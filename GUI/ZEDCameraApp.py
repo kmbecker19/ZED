@@ -2,9 +2,10 @@ import sys
 import numpy as np
 import pyzed.sl as sl
 import cv2
-from PySide6.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar
 from PySide6.QtCore import QTimer, Qt
 from PySide6.QtGui import QImage, QPixmap
+from pathlib import Path
 
 class ZEDCameraApp(QMainWindow):
     def __init__(self):
@@ -39,6 +40,45 @@ class ZEDCameraApp(QMainWindow):
         self.depth_label = QLabel("Depth Feed")
         self.save_image_button = QPushButton("Save Side-by-Side Image")
         self.save_depth_button = QPushButton("Save Depth Map")
+
+        # Toolbar
+        # Subject Folder
+        self.folder_label = QLabel("Folder: ")
+        self.folder_text = QLineEdit("Subject Folder")
+        self.folder_text.setReadOnly(True)
+        self.folder_button = QPushButton("Choose...")
+        self.folder_button.clicked.connect(self.open_folder_dialog)
+
+        # Image Name
+        self.name_label = QLabel("Name: ")
+        self.name_text = QLineEdit("Image Name")
+
+        # Image Counter
+        self.counter_label = QLabel("Counter: ")
+        self.counter_text = QLineEdit("1")
+        self.counter_text.setReadOnly(True)
+        self.counter_minus_button = QPushButton("-")
+        self.counter_minus_button.clicked.connect(self.decrement_counter)
+        self.counter_plus_button = QPushButton("+")
+        self.counter_plus_button.clicked.connect(self.increment_counter)
+        self.counter_reset_button = QPushButton("Reset")
+        self.counter_reset_button.clicked.connect(self.reset_counter)
+
+        # Image naming layout
+        naming_toolbar = QToolBar("ToolBar")
+        self.addToolBar(naming_toolbar)
+        naming_toolbar.addWidget(self.folder_label)
+        naming_toolbar.addWidget(self.folder_text)
+        naming_toolbar.addWidget(self.folder_button)
+        naming_toolbar.addSeparator()
+        naming_toolbar.addWidget(self.name_label)
+        naming_toolbar.addWidget(self.name_text)
+        naming_toolbar.addSeparator()
+        naming_toolbar.addWidget(self.counter_label)
+        naming_toolbar.addWidget(self.counter_text)
+        naming_toolbar.addWidget(self.counter_minus_button)
+        naming_toolbar.addWidget(self.counter_plus_button)
+        naming_toolbar.addWidget(self.counter_reset_button)
 
         # Connect buttons
         self.save_image_button.clicked.connect(self.save_side_by_side_image)
@@ -104,6 +144,21 @@ class ZEDCameraApp(QMainWindow):
         self.zed.close()
         event.accept()
 
+    def open_folder_dialog(self):
+        folder_path = QFileDialog.getExistingDirectory(self, "Select Subject Folder")
+        self.folder_text.setText(Path(folder_path).name)
+        
+    def increment_counter(self):
+        current_counter = int(self.counter_text.text())
+        self.counter_text.setText(str(current_counter + 1))
+
+    def decrement_counter(self):
+        current_counter = int(self.counter_text.text())
+        if current_counter > 1:
+            self.counter_text.setText(str(current_counter - 1))
+
+    def reset_counter(self):
+        self.counter_text.setText("1")
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = ZEDCameraApp()
