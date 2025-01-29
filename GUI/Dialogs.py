@@ -2,7 +2,6 @@ from PySide6.QtWidgets import QApplication, QGridLayout, QPushButton, QLabel, QL
 from PySide6.QtGui import QPixmap, QAction, QMouseEvent, QPainter, QPen
 from PySide6.QtCore import Qt, QRect, QPoint, QSize, Signal, Slot, QTimer
 import pyzed.sl as sl
-import copy
 
 
 class MessageDialog(QDialog):

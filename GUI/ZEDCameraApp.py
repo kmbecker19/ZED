@@ -21,7 +21,6 @@ class ZEDCameraApp(QMainWindow):
         self.init.depth_mode = sl.DEPTH_MODE.ULTRA
         self.init.coordinate_units = sl.UNIT.MILLIMETER
 
-        
         # Open the ZED camera
         if self.zed.open(self.init) != sl.ERROR_CODE.SUCCESS:
             print("Failed to open ZED camera")
@@ -38,11 +37,9 @@ class ZEDCameraApp(QMainWindow):
         self.image_zed = sl.Mat(self.image_size.width, self.image_size.height, sl.MAT_TYPE.U8_C4)
         self.depth_image_zed = sl.Mat(self.image_size.width, self.image_size.height, sl.MAT_TYPE.U8_C4)
 
-        # GUI Elements
+        # GUI Elements - Image Display and save button
         self.image_label = QLabel("Camera Feed")
-        self.depth_label = QLabel("Depth Feed")
         self.save_image_button = QPushButton("Save Image and Depth Map")
-        self.save_depth_button = QPushButton("Save Depth Map")
         
         # Menu Bar
         self.setStatusBar(QStatusBar(self))
@@ -59,6 +56,7 @@ class ZEDCameraApp(QMainWindow):
         self.folder_text.setReadOnly(True)
         self.folder_button = QPushButton("Choose...")
         self.folder_button.clicked.connect(self.open_folder_dialog)
+        self.folder_button.setFocusPolicy(Qt.NoFocus)
 
         # Image Name
         self.name_label = QLabel("Name: ")
@@ -70,10 +68,15 @@ class ZEDCameraApp(QMainWindow):
         self.counter_text.setReadOnly(True)
         self.counter_minus_button = QPushButton("-")
         self.counter_minus_button.clicked.connect(self.decrement_counter)
+        self.counter_minus_button.setFocusPolicy(Qt.NoFocus)
         self.counter_plus_button = QPushButton("+")
         self.counter_plus_button.clicked.connect(self.increment_counter)
+        self.counter_plus_button.setFocusPolicy(Qt.NoFocus)
         self.counter_reset_button = QPushButton("Reset")
         self.counter_reset_button.clicked.connect(self.reset_counter)
+        self.counter_reset_button.setFocusPolicy(Qt.NoFocus)
+
+        # Display Format
 
         # Image Display Format
         self.display_format_label = QLabel("Display Format: ")
@@ -102,21 +105,17 @@ class ZEDCameraApp(QMainWindow):
 
         # Connect buttons
         self.save_image_button.clicked.connect(self.save_images)
-        self.save_depth_button.clicked.connect(self.save_depth_map)
+        self.save_image_button.setAutoDefault(True)
 
-        # TODO: Update GUI to switch between depth/RGB
         # Layout
         layout = QVBoxLayout()
         layout.addWidget(self.image_label)
-        #layout.addWidget(self.depth_label)
         layout.addWidget(self.save_image_button)
-        layout.addWidget(self.save_depth_button)
 
         central_widget = QWidget()
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
 
-        # TODO: Change GUI to update with camera frame rate
         # Timer for updating frames
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_frames)
@@ -173,7 +172,9 @@ class ZEDCameraApp(QMainWindow):
         filename_depth = Path(f"{self.get_filename()}_depth")
 
         save_folder = Path('../data') / self.folder_text.text() / self.name_text.text()
-        save_folder.mkdir(exist_ok=True)
+        if not save_folder.exists():
+            save_folder.mkdir(parents=True)
+
         path_rgb = save_folder / filename_rgb
         path_depth = save_folder / filename_depth
 
@@ -218,6 +219,9 @@ class ZEDCameraApp(QMainWindow):
         counter = self.counter_text.text().zfill(2)
         return f"{subject}_{name}_{counter}"
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return:
+            self.save_images()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
