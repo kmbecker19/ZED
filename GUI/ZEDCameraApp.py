@@ -7,6 +7,7 @@ from PySide6.QtCore import QTimer, Qt
 from PySide6.QtGui import QImage, QPixmap
 from pathlib import Path
 
+
 class ZEDCameraApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -16,8 +17,8 @@ class ZEDCameraApp(QMainWindow):
         # Initialize ZED Camera
         self.zed = sl.Camera()
         init = sl.InitParameters()
-        init.camera_resolution = sl.RESOLUTION.HD1080
-        init.depth_mode = sl.DEPTH_MODE.PERFORMANCE
+        init.camera_resolution = sl.RESOLUTION.HD2K
+        init.depth_mode = sl.DEPTH_MODE.ULTRA
         init.coordinate_units = sl.UNIT.MILLIMETER
 
         if self.zed.open(init) != sl.ERROR_CODE.SUCCESS:
@@ -159,6 +160,8 @@ class ZEDCameraApp(QMainWindow):
 
     def reset_counter(self):
         self.counter_text.setText("1")
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = ZEDCameraApp()
