@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, 
 from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
-from Dialogs import CameraSettingsDialog
+from Dialogs import CameraSettingsDialog, ImageSavedDialog
 
 class ZEDCameraApp(QMainWindow):
     def __init__(self):
@@ -41,7 +41,7 @@ class ZEDCameraApp(QMainWindow):
         # GUI Elements
         self.image_label = QLabel("Camera Feed")
         self.depth_label = QLabel("Depth Feed")
-        self.save_image_button = QPushButton("Save Side-by-Side Image")
+        self.save_image_button = QPushButton("Save Image and Depth Map")
         self.save_depth_button = QPushButton("Save Depth Map")
         
         # Menu Bar
@@ -76,9 +76,10 @@ class ZEDCameraApp(QMainWindow):
         self.counter_reset_button.clicked.connect(self.reset_counter)
 
         # Image Display Format
-        self.display_format_label = QLabel("Image Format: ")
+        self.display_format_label = QLabel("Display Format: ")
         self.display_format_combo = QComboBox()
         self.display_format_combo.addItems(["RGB", "Depth"])
+        self.display_format_combo.setCurrentIndex(0)
 
         # Image naming layout
         naming_toolbar = QToolBar("ToolBar")
@@ -95,9 +96,12 @@ class ZEDCameraApp(QMainWindow):
         naming_toolbar.addWidget(self.counter_minus_button)
         naming_toolbar.addWidget(self.counter_plus_button)
         naming_toolbar.addWidget(self.counter_reset_button)
+        naming_toolbar.addSeparator()
+        naming_toolbar.addWidget(self.display_format_label)
+        naming_toolbar.addWidget(self.display_format_combo)
 
         # Connect buttons
-        self.save_image_button.clicked.connect(self.save_side_by_side_image)
+        self.save_image_button.clicked.connect(self.save_images)
         self.save_depth_button.clicked.connect(self.save_depth_map)
 
         # TODO: Update GUI to switch between depth/RGB
@@ -133,8 +137,10 @@ class ZEDCameraApp(QMainWindow):
             qt_depth = self.cv_to_qt(depth_ocv)
 
             # Display in labels
-            self.image_label.setPixmap(qt_image)
-            self.depth_label.setPixmap(qt_depth)
+            if self.display_format_combo.currentText() == "RGB":
+                self.image_label.setPixmap(qt_image)
+            elif self.display_format_combo.currentText() == "Depth":
+                self.image_label.setPixmap(qt_depth)
 
     def open_camera_settings(self):
         # Open camera settings dialog
@@ -158,14 +164,19 @@ class ZEDCameraApp(QMainWindow):
         qt_image = QImage(cv_image.data, width, height, bytes_per_line, QImage.Format_RGBA8888)
         return QPixmap.fromImage(qt_image)
 
-    # TODO: Update Save Image functions to use our naming conventions and preferred formats
-    def save_side_by_side_image(self):
+    def save_images(self):
         # Save side-by-side image
-        image_left = self.image_zed.get_data()
-        image_right = self.depth_image_zed.get_data()
-        side_by_side = np.concatenate((image_left, image_right), axis=1)
-        cv2.imwrite("side_by_side.png", side_by_side)
-        print("Side-by-side image saved.")
+        image_rgb = self.image_zed.get_data()
+        image_depth = self.depth_image_zed.get_data()
+
+        filename_rgb = Path(f"{self.get_filename()}_rgb")
+        filename_depth = Path(f"{self.get_filename()}_depth")
+        cv2.imwrite(filename_rgb.with_suffix(".png"), image_rgb)
+        cv2.imwrite(filename_depth.with_suffix(".png"), image_depth)
+        np.save(filename_depth.with_suffix(".npy"), image_depth)
+        self.increment_counter()
+        dlg = ImageSavedDialog()
+        dlg.exec()
 
     def save_depth_map(self):
         # Save depth map
@@ -193,6 +204,12 @@ class ZEDCameraApp(QMainWindow):
 
     def reset_counter(self):
         self.counter_text.setText("1")
+
+    def get_filename(self) -> str:
+        subject = self.folder_text.text()
+        name = self.name_text.text()
+        counter = self.counter_text.text().zfill(2)
+        return f"{subject}_{name}_{counter}"
 
 
 if __name__ == "__main__":
