@@ -8,6 +8,7 @@ from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
 from Dialogs import CameraSettingsDialog, ImageSavedDialog, AutoCloseDialog
 
+
 class ZEDCameraApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -225,6 +226,7 @@ class ZEDCameraApp(QMainWindow):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return:
             self.save_images()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
