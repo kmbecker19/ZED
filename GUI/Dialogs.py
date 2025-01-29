@@ -45,7 +45,8 @@ class CameraSettingsDialog(QDialog):
             sl.RESOLUTION.HD2K: "2K",
             sl.RESOLUTION.HD1080: "1080p",
             sl.RESOLUTION.HD720: "720p",
-            sl.RESOLUTION.AUTO: "Auto"
+            sl.RESOLUTION.AUTO: "Auto",
+            sl.RESOLUTION.VGA: "VGA",
         }
         resolution_label = QLabel("Resolution:")
         self.resolution_combo = QComboBox()
@@ -120,6 +121,7 @@ class CameraSettingsDialog(QDialog):
             "2K": sl.RESOLUTION.HD2K,
             "1080p": sl.RESOLUTION.HD1080,
             "720p": sl.RESOLUTION.HD720,
+            "VGA": sl.RESOLUTION.VGA,
             "Auto": sl.RESOLUTION.AUTO,
             "Ultra": sl.DEPTH_MODE.ULTRA,
             "Performance": sl.DEPTH_MODE.PERFORMANCE,

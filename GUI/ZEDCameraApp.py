@@ -2,7 +2,7 @@ import sys
 import numpy as np
 import pyzed.sl as sl
 import cv2
-from PySide6.QtWidgets import QApplication, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar
+from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar
 from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
@@ -75,6 +75,11 @@ class ZEDCameraApp(QMainWindow):
         self.counter_reset_button = QPushButton("Reset")
         self.counter_reset_button.clicked.connect(self.reset_counter)
 
+        # Image Display Format
+        self.display_format_label = QLabel("Image Format: ")
+        self.display_format_combo = QComboBox()
+        self.display_format_combo.addItems(["RGB", "Depth"])
+
         # Image naming layout
         naming_toolbar = QToolBar("ToolBar")
         self.addToolBar(naming_toolbar)
@@ -95,6 +100,7 @@ class ZEDCameraApp(QMainWindow):
         self.save_image_button.clicked.connect(self.save_side_by_side_image)
         self.save_depth_button.clicked.connect(self.save_depth_map)
 
+        # TODO: Update GUI to switch between depth/RGB
         # Layout
         layout = QVBoxLayout()
         layout.addWidget(self.image_label)
@@ -106,6 +112,7 @@ class ZEDCameraApp(QMainWindow):
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
 
+        # TODO: Change GUI to update with camera frame rate
         # Timer for updating frames
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_frames)
@@ -151,6 +158,7 @@ class ZEDCameraApp(QMainWindow):
         qt_image = QImage(cv_image.data, width, height, bytes_per_line, QImage.Format_RGBA8888)
         return QPixmap.fromImage(qt_image)
 
+    # TODO: Update Save Image functions to use our naming conventions and preferred formats
     def save_side_by_side_image(self):
         # Save side-by-side image
         image_left = self.image_zed.get_data()
