@@ -2,13 +2,13 @@ import sys
 import numpy as np
 import pyzed.sl as sl
 import cv2
-from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar, QSizePolicy
+from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar
 from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
-from Dialogs import CameraSettingsDialog, ImageSavedDialog, AutoCloseDialog
+from Dialogs import CameraSettingsDialog, ImageSavedDialog
 
-
+# TODO: Potentially Save XML Metadata
 class ZEDCameraApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -186,7 +186,7 @@ class ZEDCameraApp(QMainWindow):
         np.save(path_depth.with_suffix(".npy"), image_depth)
 
         self.increment_counter()
-        dlg = AutoCloseDialog(f"Saved {path_rgb.with_suffix('.png')}")
+        dlg = ImageSavedDialog()
         dlg.exec()
 
     def save_depth_map(self):

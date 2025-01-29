@@ -1,6 +1,5 @@
-from PySide6.QtWidgets import QApplication, QGridLayout, QPushButton, QLabel, QLineEdit, QVBoxLayout, QWidget, QHBoxLayout, QComboBox, QDialog, QDialogButtonBox, QToolBar, QStatusBar, QSlider
-from PySide6.QtGui import QPixmap, QAction, QMouseEvent, QPainter, QPen
-from PySide6.QtCore import Qt, QRect, QPoint, QSize, Signal, Slot, QTimer
+from PySide6.QtWidgets import QGridLayout, QLabel, QLineEdit, QVBoxLayout, QComboBox, QDialog, QDialogButtonBox
+from PySide6.QtCore import Signal, QTimer
 import pyzed.sl as sl
 
 
