@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QApplication, QGridLayout, QPushButton, QLabel, QL
 from PySide6.QtGui import QPixmap, QAction, QMouseEvent, QPainter, QPen
 from PySide6.QtCore import Qt, QRect, QPoint, QSize, Signal
 import pyzed.sl as sl
+import copy
 
 class MessageDialog(QDialog):
     def __init__(self, title: str, message: str):
@@ -30,7 +31,7 @@ class CameraSettingsDialog(QDialog):
     def __init__(self, init_params: sl.InitParameters):
         super().__init__()
         self.setWindowTitle("Camera Settings")
-        self.init_params = init_params.copy()
+        self.init_params = init_params
 
         # Resolution
         resolution_mapping = {
@@ -83,7 +84,7 @@ class CameraSettingsDialog(QDialog):
         # Apply Settings Button
         QBtn = QDialogButtonBox.Apply | QDialogButtonBox.Cancel
         self.buttonBox = QDialogButtonBox(QBtn)
-        self.buttonBox.accepted.connect(self.apply_settings)
+        self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
 
         # Layout

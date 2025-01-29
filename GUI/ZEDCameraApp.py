@@ -2,26 +2,28 @@ import sys
 import numpy as np
 import pyzed.sl as sl
 import cv2
-from PySide6.QtWidgets import QApplication, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar
+from PySide6.QtWidgets import QApplication, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar
 from PySide6.QtCore import QTimer, Qt
-from PySide6.QtGui import QImage, QPixmap
+from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
-
+from Dialogs import CameraSettingsDialog
 
 class ZEDCameraApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("ZED Camera Viewer")
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 400, 300)
 
         # Initialize ZED Camera
         self.zed = sl.Camera()
-        init = sl.InitParameters()
-        init.camera_resolution = sl.RESOLUTION.HD2K
-        init.depth_mode = sl.DEPTH_MODE.ULTRA
-        init.coordinate_units = sl.UNIT.MILLIMETER
+        self.init = sl.InitParameters()
+        self.init.camera_resolution = sl.RESOLUTION.HD2K
+        self.init.depth_mode = sl.DEPTH_MODE.ULTRA
+        self.init.coordinate_units = sl.UNIT.MILLIMETER
 
-        if self.zed.open(init) != sl.ERROR_CODE.SUCCESS:
+        
+        # Open the ZED camera
+        if self.zed.open(self.init) != sl.ERROR_CODE.SUCCESS:
             print("Failed to open ZED camera")
             sys.exit(1)
 
@@ -41,7 +43,15 @@ class ZEDCameraApp(QMainWindow):
         self.depth_label = QLabel("Depth Feed")
         self.save_image_button = QPushButton("Save Side-by-Side Image")
         self.save_depth_button = QPushButton("Save Depth Map")
-
+        
+        # Menu Bar
+        self.setStatusBar(QStatusBar(self))
+        menu = self.menuBar()
+        file_menu = menu.addMenu("&File")
+        settings_action = QAction("Settings...", self)
+        settings_action.triggered.connect(self.open_camera_settings)
+        file_menu.addAction(settings_action)
+        
         # Toolbar
         # Subject Folder
         self.folder_label = QLabel("Folder: ")
@@ -88,7 +98,7 @@ class ZEDCameraApp(QMainWindow):
         # Layout
         layout = QVBoxLayout()
         layout.addWidget(self.image_label)
-        layout.addWidget(self.depth_label)
+        #layout.addWidget(self.depth_label)
         layout.addWidget(self.save_image_button)
         layout.addWidget(self.save_depth_button)
 
@@ -118,6 +128,11 @@ class ZEDCameraApp(QMainWindow):
             # Display in labels
             self.image_label.setPixmap(qt_image)
             self.depth_label.setPixmap(qt_depth)
+
+    def open_camera_settings(self):
+        # Open camera settings dialog
+        dlg = CameraSettingsDialog(self.init)
+        dlg.exec()
 
     def cv_to_qt(self, cv_image):
         cv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGRA2RGBA)
