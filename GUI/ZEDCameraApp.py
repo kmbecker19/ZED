@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, 
 from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
-from Dialogs import CameraSettingsDialog, ImageSavedDialog
+from Dialogs import CameraSettingsDialog, ImageSavedDialog, AutoCloseDialog
 
 class ZEDCameraApp(QMainWindow):
     def __init__(self):
@@ -20,6 +20,7 @@ class ZEDCameraApp(QMainWindow):
         self.init.camera_resolution = sl.RESOLUTION.HD2K
         self.init.depth_mode = sl.DEPTH_MODE.ULTRA
         self.init.coordinate_units = sl.UNIT.MILLIMETER
+        self.folder_path: Path
 
         # Open the ZED camera
         if self.zed.open(self.init) != sl.ERROR_CODE.SUCCESS:
@@ -172,7 +173,7 @@ class ZEDCameraApp(QMainWindow):
         filename_rgb = Path(f"{self.get_filename()}_rgb")
         filename_depth = Path(f"{self.get_filename()}_depth")
 
-        save_folder = Path('../data') / self.folder_text.text() / self.name_text.text()
+        save_folder = self.folder_path / self.name_text.text()
         if not save_folder.exists():
             save_folder.mkdir(parents=True)
 
@@ -184,7 +185,7 @@ class ZEDCameraApp(QMainWindow):
         np.save(path_depth.with_suffix(".npy"), image_depth)
 
         self.increment_counter()
-        dlg = ImageSavedDialog()
+        dlg = AutoCloseDialog(f"Saved {path_rgb.with_suffix('.png')}")
         dlg.exec()
 
     def save_depth_map(self):
@@ -201,7 +202,8 @@ class ZEDCameraApp(QMainWindow):
     def open_folder_dialog(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Subject Folder")
         self.folder_text.setText(Path(folder_path).name)
-        
+        self.folder_path = Path(folder_path)
+
     def increment_counter(self):
         current_counter = int(self.counter_text.text())
         self.counter_text.setText(str(current_counter + 1))
