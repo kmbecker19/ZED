@@ -2,7 +2,7 @@ import sys
 import numpy as np
 import pyzed.sl as sl
 import cv2
-from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar
+from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar, QSizePolicy
 from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
@@ -40,6 +40,7 @@ class ZEDCameraApp(QMainWindow):
         # GUI Elements - Image Display and save button
         self.image_label = QLabel("Camera Feed")
         self.save_image_button = QPushButton("Save Image and Depth Map")
+        self.save_image_button.setFixedHeight(self.save_image_button.sizeHint().height() * 2)
         
         # Menu Bar
         self.setStatusBar(QStatusBar(self))
