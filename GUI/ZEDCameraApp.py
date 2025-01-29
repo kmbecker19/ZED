@@ -120,7 +120,7 @@ class ZEDCameraApp(QMainWindow):
         # Timer for updating frames
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_frames)
-        self.timer.start(30)  # 30 ms interval
+        self.timer.start(1000/60)  # 60fps
 
     def update_frames(self):
         if self.zed.grab(self.runtime_params) == sl.ERROR_CODE.SUCCESS:
@@ -165,15 +165,22 @@ class ZEDCameraApp(QMainWindow):
         return QPixmap.fromImage(qt_image)
 
     def save_images(self):
-        # Save side-by-side image
+        # Save image and depth map
         image_rgb = self.image_zed.get_data()
         image_depth = self.depth_image_zed.get_data()
 
         filename_rgb = Path(f"{self.get_filename()}_rgb")
         filename_depth = Path(f"{self.get_filename()}_depth")
-        cv2.imwrite(filename_rgb.with_suffix(".png"), image_rgb)
-        cv2.imwrite(filename_depth.with_suffix(".png"), image_depth)
-        np.save(filename_depth.with_suffix(".npy"), image_depth)
+
+        save_folder = Path('../data') / self.folder_text.text() / self.name_text.text()
+        save_folder.mkdir(exist_ok=True)
+        path_rgb = save_folder / filename_rgb
+        path_depth = save_folder / filename_depth
+
+        cv2.imwrite(path_rgb.with_suffix(".png"), image_rgb)
+        cv2.imwrite(path_depth.with_suffix(".png"), image_depth)
+        np.save(path_depth.with_suffix(".npy"), image_depth)
+
         self.increment_counter()
         dlg = ImageSavedDialog()
         dlg.exec()
