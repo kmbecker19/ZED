@@ -3,8 +3,8 @@ import numpy as np
 import cv2
 from pathlib import Path
 from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton, QLabel, QLineEdit, QFileDialog, QVBoxLayout, QWidget, QHBoxLayout, QComboBox, QDialog, QDialogButtonBox, QToolBar, QStatusBar, QSlider
-from PySide6.QtGui import QPixmap, QAction, QMouseEvent, QPainter, QPen
-from PySide6.QtCore import Qt, QRect, QPoint, QSize
+from PySide6.QtGui import QPixmap, QAction, QMouseEvent, QPainter, QPen, QImage
+from PySide6.QtCore import Qt, QRect, QPoint, QSize, Slot
 from Camera import Camera
 
 class MainWindow(QMainWindow):
@@ -55,6 +55,8 @@ class MainWindow(QMainWindow):
         
         # Camera Feed Display
         self.display = QLabel(self)
+        self.camera = Camera()
+        self.camera.frame_grabbed.connect(self.update_display)
 
         # Application Layout
         layout = QVBoxLayout()
@@ -63,6 +65,8 @@ class MainWindow(QMainWindow):
         container.setLayout(layout)
         self.setMinimumSize(1024, 1248)
         self.setCentralWidget(container)
+
+        #self.camera.get_feed()
 
     def open_folder_dialog(self):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Subject Folder")
@@ -79,6 +83,12 @@ class MainWindow(QMainWindow):
 
     def reset_counter(self):
         self.counter_text.setText("1")
+    
+    @Slot(np.ndarray)
+    def update_display(self, image_ocv):
+        image_cv = cv2.cvtColor(image_ocv, cv2.COLOR_RGBA2BGR)
+        image_qt = QImage(image_cv.data, image_cv.shape[1], image_cv.shape[0], QImage.Format_BGR888)
+        self.display.setPixmap(QPixmap.fromImage(image_qt))
 
 
 if __name__ == '__main__':
