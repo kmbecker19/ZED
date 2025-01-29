@@ -1,14 +1,15 @@
 from PySide6.QtWidgets import QApplication, QGridLayout, QPushButton, QLabel, QLineEdit, QVBoxLayout, QWidget, QHBoxLayout, QComboBox, QDialog, QDialogButtonBox, QToolBar, QStatusBar, QSlider
 from PySide6.QtGui import QPixmap, QAction, QMouseEvent, QPainter, QPen
-from PySide6.QtCore import Qt, QRect, QPoint, QSize, Signal
+from PySide6.QtCore import Qt, QRect, QPoint, QSize, Signal, Slot, QTimer
 import pyzed.sl as sl
 import copy
 
+
 class MessageDialog(QDialog):
-    def __init__(self, title: str, message: str):
+    def __init__(self, message: str, title: str=None):
         super().__init__()
         text = message
-        self.setWindowTitle(title)
+        self.setWindowTitle(message if title is None else title)
         QBtn = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
         self.buttonBox = QDialogButtonBox(QBtn)
         self.buttonBox.accepted.connect(self.accept)
@@ -20,9 +21,15 @@ class MessageDialog(QDialog):
         self.setLayout(layout)
 
 
-class ImageSavedDialog(MessageDialog):
+class AutoCloseDialog(MessageDialog):
+    def __init__(self, message: str, title: str=None, duration: int=3000):
+        super().__init__(message, title)
+        QTimer.singleShot(duration, self.close)
+
+
+class ImageSavedDialog(AutoCloseDialog):
     def __init__(self):
-        super().__init__("Image Saved", f"Image saved!")
+        super().__init__("Image Saved")
 
 
 class CameraSettingsDialog(QDialog):
@@ -84,8 +91,10 @@ class CameraSettingsDialog(QDialog):
         # Apply Settings Button
         QBtn = QDialogButtonBox.Apply | QDialogButtonBox.Cancel
         self.buttonBox = QDialogButtonBox(QBtn)
-        self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
+        apply_button = self.buttonBox.button(QDialogButtonBox.Apply)
+        if apply_button:
+            apply_button.clicked.connect(self.apply_settings)
 
         # Layout
         layout = QVBoxLayout()
@@ -106,3 +115,25 @@ class CameraSettingsDialog(QDialog):
         layout.addWidget(self.buttonBox)
         self.setLayout(layout)
 
+    def apply_settings(self):
+        mappings = {
+            "2K": sl.RESOLUTION.HD2K,
+            "1080p": sl.RESOLUTION.HD1080,
+            "720p": sl.RESOLUTION.HD720,
+            "Auto": sl.RESOLUTION.AUTO,
+            "Ultra": sl.DEPTH_MODE.ULTRA,
+            "Performance": sl.DEPTH_MODE.PERFORMANCE,
+            "Neural": sl.DEPTH_MODE.NEURAL,
+            "Millimeters": sl.UNIT.MILLIMETER,
+            "Centimeters": sl.UNIT.CENTIMETER,
+            "Meters": sl.UNIT.METER
+        }
+        self.init_params.camera_resolution = mappings[self.resolution_combo.currentText()]
+        self.init_params.camera_fps = int(self.fps_combo.currentText())
+        self.init_params.depth_mode = mappings[self.depth_mode_combo.currentText()]
+        self.init_params.coordinate_units = mappings[self.unit_combo.currentText()]
+        self.init_params.depth_minimum_distance = float(self.min_distance_box.text())
+        self.init_params.depth_maximum_distance = float(self.max_distance_box.text())
+        self.settings_changed.emit(self.init_params)
+        dlg = AutoCloseDialog("Camera Settings Updated")
+        dlg.exec()

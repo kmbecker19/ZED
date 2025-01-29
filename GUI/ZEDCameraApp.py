@@ -3,7 +3,7 @@ import numpy as np
 import pyzed.sl as sl
 import cv2
 from PySide6.QtWidgets import QApplication, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar
-from PySide6.QtCore import QTimer, Qt
+from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
 from Dialogs import CameraSettingsDialog
@@ -132,7 +132,17 @@ class ZEDCameraApp(QMainWindow):
     def open_camera_settings(self):
         # Open camera settings dialog
         dlg = CameraSettingsDialog(self.init)
+        dlg.settings_changed.connect(self.update_camera_settings)
         dlg.exec()
+
+    @Slot(sl.InitParameters)
+    def update_camera_settings(self, new_params):
+        self.init = new_params
+        self.zed.close()
+        if self.zed.open(self.init) != sl.ERROR_CODE.SUCCESS:
+            print("Failed to open ZED camera with updated settings.")
+            sys.exit(1)
+        print("Camera settings updated.")
 
     def cv_to_qt(self, cv_image):
         cv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGRA2RGBA)
