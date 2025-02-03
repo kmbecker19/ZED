@@ -171,12 +171,12 @@ class ZEDCameraApp(QMainWindow):
         image_rgb = self.image_zed.get_data()
         image_depth = self.depth_image_zed.get_data()
 
-        filename_rgb = Path(f"{self.get_filename()}_rgb")
-        filename_depth = Path(f"{self.get_filename()}_depth")
-
-        save_folder = self.folder_path / self.name_text.text()
+        save_folder = self.get_save_folder()
         if not save_folder.exists():
             save_folder.mkdir(parents=True)
+
+        filename_rgb = Path(f"RGB_{self.get_filename()}")
+        filename_depth = Path(f"DEPTH_{self.get_filename()}")
 
         path_rgb = save_folder / filename_rgb
         path_depth = save_folder / filename_depth
@@ -223,6 +223,13 @@ class ZEDCameraApp(QMainWindow):
         counter = self.counter_text.text().zfill(2)
         return f"{subject}_{name}_{counter}"
 
+    def get_save_folder(self) -> Path:
+        subj_folder = self.folder_path
+        name = self.name_text.text()
+        counter = self.counter_text.text().zfill(2)
+        folder_name = f"{name}_{counter}"
+        return subj_folder / folder_name
+    
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return:
             self.save_images()
