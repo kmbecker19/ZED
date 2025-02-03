@@ -29,7 +29,7 @@ class ZEDCameraApp(QMainWindow):
             sys.exit(1)
 
         # Set runtime parameters
-        self.runtime_params = sl.RuntimeParameters(enable_fill_mode=True)
+        self.runtime_params = sl.RuntimeParameters(enable_fill_mode=False)
         camera_info = self.zed.get_camera_information()
         self.image_size = camera_info.camera_configuration.resolution
         self.image_size.width //= 2
