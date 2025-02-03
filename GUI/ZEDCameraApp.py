@@ -21,6 +21,8 @@ class ZEDCameraApp(QMainWindow):
         self.init.camera_resolution = sl.RESOLUTION.HD2K
         self.init.depth_mode = sl.DEPTH_MODE.ULTRA
         self.init.coordinate_units = sl.UNIT.MILLIMETER
+        self.init.depth_minimum_distance = 2010
+        self.init.depth_maximum_distance = 2520
         self.folder_path: Path
 
         # Open the ZED camera
