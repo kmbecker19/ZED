@@ -19,6 +19,9 @@ class ZEDCameraApp(QMainWindow):
         self.setWindowTitle("ZED Camera Viewer")
         self.setGeometry(100, 100, 400, 300)
 
+        # Path to store the Subject Folder for saving
+        self.folder_path: Path
+
         # Initialize ZED Camera
         self.zed = sl.Camera()
         self.init = sl.InitParameters()
@@ -27,15 +30,22 @@ class ZEDCameraApp(QMainWindow):
         self.init.coordinate_units = sl.UNIT.MILLIMETER
         self.init.depth_minimum_distance = 2010
         self.init.depth_maximum_distance = 2520
-        self.folder_path: Path
+        
+        tracking_params = sl.PositionalTrackingParameters()
+        tracking_params.set_as_static = True
 
         # Open the ZED camera
         if self.zed.open(self.init) != sl.ERROR_CODE.SUCCESS:
             print("Failed to open ZED camera")
             sys.exit(1)
 
+        # Enable Positional tracking (static)
+        if self.zed.enable_positional_tracking(tracking_params) != sl.ERROR_CODE.SUCCESS:
+            print("Failed to enable positional tracking")
+            sys.exit(1)
+
         # Set runtime parameters
-        self.runtime_params = sl.RuntimeParameters(enable_fill_mode=False)
+        self.runtime_params = sl.RuntimeParameters(enable_fill_mode=True)
         camera_info = self.zed.get_camera_information()
         self.image_size = camera_info.camera_configuration.resolution
         self.image_size.width //= 2
