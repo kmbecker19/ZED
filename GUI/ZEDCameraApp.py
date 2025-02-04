@@ -10,6 +10,9 @@ from Dialogs import CameraSettingsDialog, ImageSavedDialog
 
 # TODO: Potentially Save XML Metadata
 class ZEDCameraApp(QMainWindow):
+    """
+    A GUI application for viewing and saving images and depth maps from a ZED camera.
+    """
     def __init__(self):
         super().__init__()
         self.setWindowTitle("ZED Camera Viewer")
@@ -127,6 +130,21 @@ class ZEDCameraApp(QMainWindow):
         self.timer.start(1000/60)  # 60fps
 
     def update_frames(self):
+        """
+        Updates the frames captured from the ZED camera and displays them in the GUI.
+
+        This method performs the following steps:
+        1. Grabs a new frame from the ZED camera.
+        2. Retrieves the left view and depth view images from the camera.
+        3. Converts the retrieved images to OpenCV format.
+        4. Converts the OpenCV images to Qt format.
+        5. Displays the converted images in the GUI based on the selected display format.
+
+        The display format can be either "RGB" or "Depth", as selected in the display_format_combo widget.
+
+        Returns:
+            None
+        """
         if self.zed.grab(self.runtime_params) == sl.ERROR_CODE.SUCCESS:
             # Retrieve images
             self.zed.retrieve_image(self.image_zed, sl.VIEW.LEFT, sl.MEM.CPU, self.image_size)
@@ -147,6 +165,13 @@ class ZEDCameraApp(QMainWindow):
                 self.image_label.setPixmap(qt_depth)
 
     def open_camera_settings(self):
+        """
+        Opens the camera settings dialog.
+
+        This method creates an instance of the CameraSettingsDialog, connects the 
+        settings_changed signal to the update_camera_settings slot, and executes 
+        the dialog to allow the user to change camera settings.
+        """
         # Open camera settings dialog
         dlg = CameraSettingsDialog(self.init)
         dlg.settings_changed.connect(self.update_camera_settings)
@@ -154,6 +179,20 @@ class ZEDCameraApp(QMainWindow):
 
     @Slot(sl.InitParameters)
     def update_camera_settings(self, new_params):
+        """
+        Updates the camera settings with the provided parameters.
+
+        This method closes the current ZED camera instance, updates its settings with the
+        provided parameters, and attempts to reopen the camera with the new settings. If
+        the camera fails to open with the updated settings, the program will exit with an
+        error message.
+
+        Args:
+            new_params: The new parameters to update the camera settings with.
+
+        Raises:
+            SystemExit: If the camera fails to open with the updated settings.
+        """
         self.init = new_params
         self.zed.close()
         if self.zed.open(self.init) != sl.ERROR_CODE.SUCCESS:
@@ -161,7 +200,16 @@ class ZEDCameraApp(QMainWindow):
             sys.exit(1)
         print("Camera settings updated.")
 
-    def cv_to_qt(self, cv_image):
+    def cv_to_qt(self, cv_image) -> QPixmap:
+        """
+        Converts an OpenCV image to a QPixmap for use in a Qt application.
+
+        Args:
+            cv_image (numpy.ndarray): The OpenCV image to be converted.
+
+        Returns:
+            QPixmap: The converted image in QPixmap format.
+        """
         cv_image = cv2.cvtColor(cv_image, cv2.COLOR_BGRA2RGBA)
         height, width, channel = cv_image.shape
         bytes_per_line = channel * width
@@ -169,6 +217,13 @@ class ZEDCameraApp(QMainWindow):
         return QPixmap.fromImage(qt_image)
 
     def save_images(self):
+        """
+        Saves the current RGB image and depth map from the ZED camera to the specified folder.
+
+        This method retrieves the RGB image and depth map from the ZED camera, saves them as PNG files,
+        and also saves the depth map as a NumPy array file (.npy). The filenames are generated using
+        a predefined naming convention, and the save folder is created if it does not exist.
+        """
         # Save image and depth map
         image_rgb = self.image_zed.get_data()
         image_depth = self.depth_image_zed.get_data()
@@ -191,41 +246,60 @@ class ZEDCameraApp(QMainWindow):
         dlg = ImageSavedDialog()
         dlg.exec()
 
-    def save_depth_map(self):
-        # Save depth map
-        depth_data = self.depth_image_zed.get_data()
-        cv2.imwrite("depth_map.png", depth_data)
-        print("Depth map saved.")
-
     def closeEvent(self, event):
+        """
+        Closes the ZED camera when the application is closed.
+        """
         # Cleanup
         self.zed.close()
         event.accept()
 
     def open_folder_dialog(self):
+        """
+        Opens a folder dialog for the user to select a directory.
+
+        This method uses QFileDialog to open a dialog window that allows the user to select a directory.
+        The selected directory's name is then set to the folder_text widget, and the full path is stored
+        in the folder_path attribute.
+        """
         folder_path = QFileDialog.getExistingDirectory(self, "Select Subject Folder")
         self.folder_text.setText(Path(folder_path).name)
         self.folder_path = Path(folder_path)
 
     def increment_counter(self):
+        """
+        Increments the image counter by 1.
+        """
         current_counter = int(self.counter_text.text())
         self.counter_text.setText(str(current_counter + 1))
 
     def decrement_counter(self):
+        """
+        Decrements the image counter by 1.
+        """
         current_counter = int(self.counter_text.text())
         if current_counter > 1:
             self.counter_text.setText(str(current_counter - 1))
 
     def reset_counter(self):
+        """
+        Resets the image counter to 1.
+        """
         self.counter_text.setText("1")
 
     def get_filename(self) -> str:
+        """
+        Generates a filename based on the current subject, name, and counter values.
+        """
         subject = self.folder_text.text()
         name = self.name_text.text()
         counter = self.counter_text.text().zfill(2)
         return f"{subject}_{name}_{counter}"
 
     def get_save_folder(self) -> Path:
+        """
+        Generates a folder path based on the current subject, name, and counter values.
+        """
         subj_folder = self.folder_path
         name = self.name_text.text()
         counter = self.counter_text.text().zfill(2)
@@ -233,6 +307,9 @@ class ZEDCameraApp(QMainWindow):
         return subj_folder / folder_name
     
     def keyPressEvent(self, event):
+        """
+        Saves images if Enter or Return Key is pressed.
+        """
         if event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return:
             self.save_images()
 

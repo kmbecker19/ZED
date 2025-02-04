@@ -4,6 +4,20 @@ import pyzed.sl as sl
 
 
 class MessageDialog(QDialog):
+    """
+    A dialog window for displaying a message with OK and Cancel buttons.
+
+    Args:
+        message (str): The message to be displayed in the dialog.
+        title (str, optional): The title of the dialog window. Defaults to None.
+
+    Attributes:
+        buttonBox (QDialogButtonBox): The button box containing OK and Cancel buttons.
+
+    Methods:
+        accept(): Closes the dialog and sets the result code to Accepted.
+        reject(): Closes the dialog and sets the result code to Rejected.
+    """
     def __init__(self, message: str, title: str=None):
         super().__init__()
         text = message
@@ -20,17 +34,56 @@ class MessageDialog(QDialog):
 
 
 class AutoCloseDialog(MessageDialog):
+    """
+    A dialog that automatically closes after a specified duration.
+
+    Args:
+        message (str): The message to be displayed in the dialog.
+        title (str, optional): The title of the dialog. Defaults to None.
+        duration (int, optional): The duration in milliseconds before the dialog closes automatically. Defaults to 3000 ms (3 seconds).
+    """
     def __init__(self, message: str, title: str=None, duration: int=3000):
         super().__init__(message, title)
         QTimer.singleShot(duration, self.close)
 
 
 class ImageSavedDialog(AutoCloseDialog):
+    """
+    A dialog that indicates images have been saved.
+
+    This dialog automatically closes after a certain period of time.
+
+    Attributes:
+        None
+
+    Methods:
+        __init__(): Initializes the dialog with a message indicating images have been saved.
+    """
     def __init__(self):
         super().__init__("Images Saved")
 
 
 class CameraSettingsDialog(QDialog):
+    """
+    A dialog for configuring camera settings. 
+
+    Sends a Signal to the MainWindow of the application to update the ZED depth camera settings
+    when the 'Apply' button is clicked.
+
+    Attributes:
+        settings_changed (Signal): Signal emitted when settings are changed.
+        init_params (sl.InitParameters): Initial parameters for the camera.
+        resolution_combo (QComboBox): Combo box for selecting camera resolution.
+        fps_combo (QComboBox): Combo box for selecting camera FPS.
+        depth_mode_combo (QComboBox): Combo box for selecting depth mode.
+        unit_combo (QComboBox): Combo box for selecting coordinate units.
+        min_distance_box (QLineEdit): Line edit for setting minimum depth distance.
+        max_distance_box (QLineEdit): Line edit for setting maximum depth distance.
+        buttonBox (QDialogButtonBox): Dialog button box for applying or canceling changes.
+    Methods:
+        __init__(init_params: sl.InitParameters): Initializes the dialog with given parameters.
+        apply_settings(): Applies the settings and emits the settings_changed signal.
+    """
     # Signal
     settings_changed = Signal(sl.InitParameters)
     def __init__(self, init_params: sl.InitParameters):
@@ -115,6 +168,25 @@ class CameraSettingsDialog(QDialog):
         self.setLayout(layout)
 
     def apply_settings(self):
+        """
+        Apply the settings from the GUI to the camera initialization parameters.
+
+        This method retrieves the current selections from the GUI elements (combo boxes and text boxes),
+        maps them to the corresponding SDK constants, and updates the camera initialization parameters.
+        It then emits a signal indicating that the settings have changed and displays a dialog to inform
+        the user that the camera settings have been updated.
+
+        Mappings:
+            - Resolution: "2K", "1080p", "720p", "VGA", "Auto"
+            - Depth Mode: "Ultra", "Performance", "Neural"
+            - Unit: "Millimeters", "Centimeters", "Meters"
+            
+        Emits:
+            settings_changed: Signal emitted with the updated initialization parameters
+
+        Displays:
+            AutoCloseDialog: Dialog indicating that the camera settings have been updated
+        """
         mappings = {
             "2K": sl.RESOLUTION.HD2K,
             "1080p": sl.RESOLUTION.HD1080,
