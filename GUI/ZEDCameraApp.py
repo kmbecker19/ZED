@@ -44,6 +44,8 @@ class ZEDCameraApp(QMainWindow):
         # Prepare Mat objects
         self.image_zed = sl.Mat(self.image_size.width, self.image_size.height, sl.MAT_TYPE.U8_C4)
         self.depth_image_zed = sl.Mat(self.image_size.width, self.image_size.height, sl.MAT_TYPE.U8_C4)
+        # For Raw depth data
+        self.depth_map_zed = sl.Mat(self.image_size.width, self.image_size.height)
 
         # GUI Elements - Image Display and save button
         self.image_label = QLabel("Camera Feed")
@@ -150,6 +152,7 @@ class ZEDCameraApp(QMainWindow):
             # Retrieve images
             self.zed.retrieve_image(self.image_zed, sl.VIEW.LEFT, sl.MEM.CPU, self.image_size)
             self.zed.retrieve_image(self.depth_image_zed, sl.VIEW.DEPTH, sl.MEM.CPU, self.image_size)
+            self.zed.retrieve_measure(self.depth_map_zed, sl.MEASURE.DEPTH)
 
             # Convert to OpenCV format
             image_ocv = self.image_zed.get_data()
@@ -229,6 +232,7 @@ class ZEDCameraApp(QMainWindow):
         # Save image and depth map
         image_rgb = self.image_zed.get_data()
         image_depth = self.depth_image_zed.get_data()
+        depth_map = self.depth_map_zed.get_data()
 
         save_folder = self.get_save_folder()
         if not save_folder.exists():
@@ -240,9 +244,11 @@ class ZEDCameraApp(QMainWindow):
         path_rgb = save_folder / filename_rgb
         path_depth = save_folder / filename_depth
 
+        # Save Image
         cv2.imwrite(path_rgb.with_suffix(".png"), image_rgb)
         cv2.imwrite(path_depth.with_suffix(".png"), image_depth)
-        np.save(path_depth.with_suffix(".npy"), image_depth)
+        # Save Depth Map
+        np.save(path_depth.with_suffix(".npy"), depth_map)
 
         self.increment_counter()
         dlg = ImageSavedDialog()
