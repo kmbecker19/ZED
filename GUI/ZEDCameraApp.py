@@ -7,6 +7,7 @@ from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
 from Dialogs import CameraSettingsDialog, ImageSavedDialog
+from Utils import sobel_filter
 
 # TODO: Save Camera Settings as Image Metadata
 # TODO: Add Sobel Edge Detection and Visualization
@@ -102,7 +103,7 @@ class ZEDCameraApp(QMainWindow):
         # Image Display Format
         self.display_format_label = QLabel("Display Format: ")
         self.display_format_combo = QComboBox()
-        self.display_format_combo.addItems(["RGB", "Depth"])
+        self.display_format_combo.addItems(["RGB", "Depth", "Sobel"])
         self.display_format_combo.setCurrentIndex(0)
 
         # Image naming layout
@@ -177,6 +178,10 @@ class ZEDCameraApp(QMainWindow):
                 self.image_label.setPixmap(qt_image)
             elif self.display_format_combo.currentText() == "Depth":
                 self.image_label.setPixmap(qt_depth)
+            elif self.display_format_combo.currentText() == "Sobel":
+                sobel_image = sobel_filter(depth_ocv)
+                qt_sobel = self.cv_to_qt(sobel_image)
+                self.image_label.setPixmap(qt_sobel)
 
     def open_camera_settings(self):
         """
