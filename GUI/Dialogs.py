@@ -180,7 +180,7 @@ class CameraSettingsDialog(QDialog):
             - Resolution: "2K", "1080p", "720p", "VGA", "Auto"
             - Depth Mode: "Ultra", "Performance", "Neural"
             - Unit: "Millimeters", "Centimeters", "Meters"
-            
+
         Emits:
             settings_changed: Signal emitted with the updated initialization parameters
 
@@ -209,3 +209,9 @@ class CameraSettingsDialog(QDialog):
         self.settings_changed.emit(self.init_params)
         dlg = AutoCloseDialog("Camera Settings Updated")
         dlg.exec()
+
+# TODO: Implement RunTimeParamDialog
+class RunTimeParamDialog(QDialog):
+    def __init__(self):
+        super().__init__()
+        raise NotImplementedError()

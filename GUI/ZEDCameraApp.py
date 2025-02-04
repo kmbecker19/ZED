@@ -10,7 +10,7 @@ from Dialogs import CameraSettingsDialog, ImageSavedDialog
 from Utils import sobel_filter
 
 # TODO: Save Camera Settings as Image Metadata
-# TODO: Add Sobel Edge Detection and Visualization
+# TODO: Add Runtime Parameters Dialog
 class ZEDCameraApp(QMainWindow):
     """
     A GUI application for viewing and saving images and depth maps from a ZED camera.
