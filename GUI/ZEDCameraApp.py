@@ -230,7 +230,6 @@ class ZEDCameraApp(QMainWindow):
         qt_image = QImage(cv_image.data, width, height, bytes_per_line, QImage.Format_RGBA8888)
         return QPixmap.fromImage(qt_image)
 
-    # TODO: Save Raw Depth map data
     def save_images(self):
         """
         Saves the current RGB image and depth map from the ZED camera to the specified folder.
@@ -307,7 +306,9 @@ class ZEDCameraApp(QMainWindow):
 
     def get_filename(self) -> str:
         """
-        Generates a filename based on the current subject, name, and counter values.
+        Constructs a filename string based on the subject, name, and counter values.
+        Returns:
+            str: The constructed filename in the format "{subject}_{name}_{counter}".
         """
         subject = self.folder_text.text()
         name = self.name_text.text()
@@ -316,7 +317,12 @@ class ZEDCameraApp(QMainWindow):
 
     def get_save_folder(self) -> Path:
         """
-        Generates a folder path based on the current subject, name, and counter values.
+        Constructs and returns the path to the save folder.
+        The save folder path is constructed using the base folder path (`self.folder_path`),
+        the name from the `name_text` widget, and a zero-padded counter from the `counter_text` widget.
+        The resulting folder name is in the format: "{name}_{counter}".
+        Returns:
+            Path: The constructed path to the save folder.
         """
         subj_folder = self.folder_path
         name = self.name_text.text()
