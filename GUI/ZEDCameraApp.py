@@ -8,7 +8,8 @@ from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
 from Dialogs import CameraSettingsDialog, ImageSavedDialog
 
-# TODO: Potentially Save XML Metadata
+# TODO: Save Camera Settings as Image Metadata
+# TODO: Add Sobel Edge Detection and Visualization
 class ZEDCameraApp(QMainWindow):
     """
     A GUI application for viewing and saving images and depth maps from a ZED camera.
@@ -216,6 +217,7 @@ class ZEDCameraApp(QMainWindow):
         qt_image = QImage(cv_image.data, width, height, bytes_per_line, QImage.Format_RGBA8888)
         return QPixmap.fromImage(qt_image)
 
+    # TODO: Save Raw Depth map data
     def save_images(self):
         """
         Saves the current RGB image and depth map from the ZED camera to the specified folder.
