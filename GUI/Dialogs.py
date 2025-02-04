@@ -210,8 +210,82 @@ class CameraSettingsDialog(QDialog):
         dlg = AutoCloseDialog("Camera Settings Updated")
         dlg.exec()
 
-# TODO: Implement RunTimeParamDialog
+
 class RunTimeParamDialog(QDialog):
-    def __init__(self):
+    """
+    A dialog for setting runtime parameters.
+    Attributes:
+        settings_changed (Signal): Signal emitted when settings are changed.
+        params (sl.RuntimeParameters): The runtime parameters.
+    Methods:
+        __init__(params: sl.RuntimeParameters):
+            Initializes the dialog with the given runtime parameters.
+        apply_settings():
+            Applies the settings from the dialog to the runtime parameters and emits the settings_changed signal.
+    """
+
+    settings_changed = Signal(sl.RuntimeParameters)
+
+    def __init__(self, params: sl.RuntimeParameters):
         super().__init__()
-        raise NotImplementedError()
+        self.setWindowTitle("Runtime Parameters")
+        self.params = params
+
+        # Fill Mode
+        fill_mode_label = QLabel("Fill Mode:")
+        self.fill_mode_combo = QComboBox()
+        self.fill_mode_combo.addItems(["True", "False"])
+        self.fill_mode_combo.setCurrentIndex(0 if params.enable_fill_mode else 1)
+
+        # Confidence Threshold
+        confidence_label = QLabel("Confidence Threshold:")
+        self.confidence_box = QLineEdit(f"{params.confidence_threshold}")
+
+        # Texture Confidence Threshold
+        texture_confidence_label = QLabel("Texture Confidence Threshold:")
+        self.texture_confidence_box = QLineEdit(f"{params.texture_confidence_threshold}")
+
+        # Apply Settings Button
+        QBtn = QDialogButtonBox.Apply | QDialogButtonBox.Cancel
+        self.buttonBox = QDialogButtonBox(QBtn)
+        self.buttonBox.rejected.connect(self.reject)
+        apply_button = self.buttonBox.button(QDialogButtonBox.Apply)
+        if apply_button:
+            apply_button.clicked.connect(self.apply_settings)
+        
+        # Layout
+        layout = QVBoxLayout()
+        main_layout = QGridLayout()
+        main_layout.addWidget(fill_mode_label, 0, 0)
+        main_layout.addWidget(self.fill_mode_combo, 0, 1)
+        main_layout.addWidget(confidence_label, 1, 0)
+        main_layout.addWidget(self.confidence_box, 1, 1)
+        main_layout.addWidget(texture_confidence_label, 2, 0)
+        main_layout.addWidget(self.texture_confidence_box, 2, 1)
+        layout.addLayout(main_layout)
+        layout.addWidget(self.buttonBox)
+        self.setLayout(layout)
+
+    def apply_settings(self):
+        """
+        Apply the settings from the GUI to the runtime parameters.
+
+        This method retrieves the current values from the GUI elements, updates the
+        runtime parameters accordingly, and emits a signal indicating that the settings
+        have changed. It also displays a dialog to inform the user that the runtime
+        parameters have been updated.
+
+        Emits:
+            settings_changed: Signal emitted with the updated initialization parameters
+
+        Displays:
+            AutoCloseDialog: Dialog indicating that the camera settings have been updated
+        """
+        self.params = sl.RuntimeParameters()
+        self.params.enable_fill_mode = self.fill_mode_combo.currentText() == "True"
+        self.params.confidence_threshold = float(self.confidence_box.text())
+        self.params.texture_confidence_threshold = float(self.texture_confidence_box.text())
+        self.settings_changed.emit(self.params)
+        dlg = AutoCloseDialog("Runtime Parameters Updated")
+        dlg.exec()
+        
