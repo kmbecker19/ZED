@@ -26,7 +26,7 @@ class ZEDCameraApp(QMainWindow):
         self.zed = sl.Camera()
         self.init = sl.InitParameters()
         self.init.camera_resolution = sl.RESOLUTION.HD2K
-        self.init.depth_mode = sl.DEPTH_MODE.ULTRA
+        self.init.depth_mode = sl.DEPTH_MODE.NEURAL
         self.init.coordinate_units = sl.UNIT.MILLIMETER
         self.init.depth_minimum_distance = 2010
         self.init.depth_maximum_distance = 2520
@@ -45,7 +45,7 @@ class ZEDCameraApp(QMainWindow):
             sys.exit(1)
 
         # Set runtime parameters
-        self.runtime_params = sl.RuntimeParameters(enable_fill_mode=True)
+        self.runtime_params = sl.RuntimeParameters(enable_fill_mode=False)
         camera_info = self.zed.get_camera_information()
         self.image_size = camera_info.camera_configuration.resolution
         self.image_size.width //= 2
