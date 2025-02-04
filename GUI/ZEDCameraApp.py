@@ -2,14 +2,15 @@ import sys
 import numpy as np
 import pyzed.sl as sl
 import cv2
+import json
 from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar
 from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
 from Dialogs import CameraSettingsDialog, ImageSavedDialog, RunTimeParamDialog, AutoCloseDialog
-from Utils import sobel_filter
+from Utils import sobel_filter, param2dict
 
-# TODO: Save Camera Settings as Image Metadata
+
 class ZEDCameraApp(QMainWindow):
     """
     A GUI application for viewing and saving images and depth maps from a ZED camera.
@@ -26,7 +27,7 @@ class ZEDCameraApp(QMainWindow):
         self.zed = sl.Camera()
         self.init = sl.InitParameters()
         self.init.camera_resolution = sl.RESOLUTION.HD2K
-        self.init.depth_mode = sl.DEPTH_MODE.NEURAL
+        self.init.depth_mode = sl.DEPTH_MODE.ULTRA
         self.init.coordinate_units = sl.UNIT.MILLIMETER
         self.init.depth_minimum_distance = 2010
         self.init.depth_maximum_distance = 2520
@@ -109,6 +110,7 @@ class ZEDCameraApp(QMainWindow):
         self.display_format_combo = QComboBox()
         self.display_format_combo.addItems(["RGB", "Depth", "Sobel"])
         self.display_format_combo.setCurrentIndex(0)
+        self.display_format_combo.setFocusPolicy(Qt.NoFocus)
 
         # Image naming layout
         naming_toolbar = QToolBar("ToolBar")
@@ -168,6 +170,7 @@ class ZEDCameraApp(QMainWindow):
             self.zed.retrieve_image(self.image_zed, sl.VIEW.LEFT, sl.MEM.CPU, self.image_size)
             self.zed.retrieve_image(self.depth_image_zed, sl.VIEW.DEPTH, sl.MEM.CPU, self.image_size)
             self.zed.retrieve_measure(self.depth_map_zed, sl.MEASURE.DEPTH)
+            self.timestamp = self.zed.get_timestamp(sl.TIME_REFERENCE.IMAGE)
 
             # Convert to OpenCV format
             image_ocv = self.image_zed.get_data()
@@ -296,10 +299,46 @@ class ZEDCameraApp(QMainWindow):
         cv2.imwrite(path_depth.with_suffix(".png"), image_depth)
         # Save Depth Map
         np.save(path_depth.with_suffix(".npy"), depth_map)
+        # Save Metadata
+        self.save_metadata(save_folder)
 
         self.increment_counter()
         dlg = ImageSavedDialog()
         dlg.exec()
+
+    def save_metadata(self, dest: Path):
+        """
+        Save metadata information to a specified destination.
+
+        This method collects metadata from the image and camera settings,
+        and saves it to a file named 'metadata.txt' in the specified destination directory.
+
+        Args:
+            dest (Path): The destination directory where the metadata file will be saved.
+
+        Metadata Structure:
+            - image_data:
+                - name (str): The filename of the image.
+                - resolution (str): The resolution of the image in the format "width x height".
+                - timestamp (str): The timestamp of the image in milliseconds.
+            - init_parameters (dict): The initial camera settings.
+            - runtime_parameters (dict): The runtime parameters of the camera.
+
+        Raises:
+            IOError: If there is an error writing the metadata file.
+        """
+        metadata = {}
+        metadata["image_data"] = {
+            "name" : self.get_filename(),
+            "resolution": f"{self.image_zed.get_width()} x {self.image_zed.get_height()}",
+            "timestamp": str(self.timestamp.get_milliseconds())
+        }
+        metadata["init_parameters"] = param2dict(self.init)
+        metadata["runtime_parameters"] = param2dict(self.runtime_params)
+        # Save Metadata to file
+        save_file = dest / "metadata.txt"
+        with save_file.open("w") as file:
+            json.dump(metadata, file, indent=4)
 
     def closeEvent(self, event):
         """

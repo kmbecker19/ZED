@@ -1,5 +1,8 @@
 import cv2
 import numpy as np
+import pyzed.sl as sl
+from typing import Union
+
 
 def sobel_filter(img: np.ndarray, ksize: int = 3) -> np.ndarray:
     """
@@ -22,3 +25,25 @@ def sobel_filter(img: np.ndarray, ksize: int = 3) -> np.ndarray:
     sobel = np.sqrt(sobelx ** 2 + sobely ** 2)
     sobel_norm = (sobel * 255 / sobel.max()).astype(np.uint8)
     return sobel_norm
+
+
+def param2dict(param: Union[sl.InitParameters, sl.RuntimeParameters]) -> dict:
+    """
+    Converts a ZED SDK parameter object to a dictionary.
+
+    Parameters:
+        param (Union[sl.InitParameters, sl.RuntimeParameters]): ZED SDK parameter object.
+    Returns:
+        dict: Dictionary with parameter names and values.
+    """
+    attributes = {}
+    source = {key: None for key in dir(param) 
+              if not key.startswith('__') 
+              and not callable(getattr(param, key, None))}
+    
+    for key in source:
+        try:
+            attributes[key] = str(getattr(param, key))
+        except (AttributeError, TypeError, ValueError) as e:
+            pass
+    return attributes
