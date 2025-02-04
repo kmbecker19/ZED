@@ -244,13 +244,16 @@ class RunTimeParamDialog(QDialog):
         self.texture_confidence_box = QLineEdit(f"{params.texture_confidence_threshold}")
 
         # Apply Settings Button
-        QBtn = QDialogButtonBox.Apply | QDialogButtonBox.Cancel
+        QBtn = QDialogButtonBox.Apply | QDialogButtonBox.Reset | QDialogButtonBox.Cancel
         self.buttonBox = QDialogButtonBox(QBtn)
         self.buttonBox.rejected.connect(self.reject)
         apply_button = self.buttonBox.button(QDialogButtonBox.Apply)
+        reset_button = self.buttonBox.button(QDialogButtonBox.Reset)
         if apply_button:
             apply_button.clicked.connect(self.apply_settings)
-        
+        if reset_button:
+            reset_button.clicked.connect(lambda: self.reset_params())
+
         # Layout
         layout = QVBoxLayout()
         main_layout = QGridLayout()
@@ -284,4 +287,10 @@ class RunTimeParamDialog(QDialog):
         self.params.confidence_threshold = float(self.confidence_box.text())
         self.params.texture_confidence_threshold = float(self.texture_confidence_box.text())
         self.settings_changed.emit(self.params)
+
+    def reset_params(self):
+        self.fill_mode_combo.setCurrentIndex(0)
+        self.confidence_box.setText("95")
+        self.texture_confidence_box.setText("100")
+        self.apply_settings()
         
