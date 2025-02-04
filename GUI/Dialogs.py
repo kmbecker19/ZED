@@ -207,8 +207,6 @@ class CameraSettingsDialog(QDialog):
         self.init_params.depth_minimum_distance = float(self.min_distance_box.text())
         self.init_params.depth_maximum_distance = float(self.max_distance_box.text())
         self.settings_changed.emit(self.init_params)
-        dlg = AutoCloseDialog("Camera Settings Updated")
-        dlg.exec()
 
 
 class RunTimeParamDialog(QDialog):
@@ -286,6 +284,4 @@ class RunTimeParamDialog(QDialog):
         self.params.confidence_threshold = float(self.confidence_box.text())
         self.params.texture_confidence_threshold = float(self.texture_confidence_box.text())
         self.settings_changed.emit(self.params)
-        dlg = AutoCloseDialog("Runtime Parameters Updated")
-        dlg.exec()
         

@@ -6,11 +6,10 @@ from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, 
 from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
-from Dialogs import CameraSettingsDialog, ImageSavedDialog
+from Dialogs import CameraSettingsDialog, ImageSavedDialog, RunTimeParamDialog, AutoCloseDialog
 from Utils import sobel_filter
 
 # TODO: Save Camera Settings as Image Metadata
-# TODO: Add Runtime Parameters Dialog
 class ZEDCameraApp(QMainWindow):
     """
     A GUI application for viewing and saving images and depth maps from a ZED camera.
@@ -66,10 +65,15 @@ class ZEDCameraApp(QMainWindow):
         # Menu Bar
         self.setStatusBar(QStatusBar(self))
         menu = self.menuBar()
-        file_menu = menu.addMenu("&File")
-        settings_action = QAction("Settings...", self)
-        settings_action.triggered.connect(self.open_camera_settings)
-        file_menu.addAction(settings_action)
+        settings_menu = menu.addMenu("&Settings")
+        # Camera Settings Dialog
+        camera_settings_action = QAction("Camera...", self)
+        camera_settings_action.triggered.connect(self.open_camera_settings)
+        settings_menu.addAction(camera_settings_action)
+        # Runtime Params Dialog
+        runtime_params_action = QAction("Runtime...", self)
+        runtime_params_action.triggered.connect(self.open_runtime_params)
+        settings_menu.addAction(runtime_params_action)
         
         # Toolbar
         # Subject Folder
@@ -217,7 +221,36 @@ class ZEDCameraApp(QMainWindow):
         if self.zed.open(self.init) != sl.ERROR_CODE.SUCCESS:
             print("Failed to open ZED camera with updated settings.")
             sys.exit(1)
-        print("Camera settings updated.")
+        dlg = AutoCloseDialog("Camera Settings Updated")
+        dlg.exec()
+
+    def open_runtime_params(self):
+        """
+        Opens a dialog to modify runtime parameters.
+
+        This method creates an instance of RunTimeParamDialog, passing the current
+        runtime parameters to it. It connects the dialog's settings_changed signal
+        to the update_runtime_params method to handle any changes made in the dialog.
+        Finally, it executes the dialog.
+        """
+        dlg = RunTimeParamDialog(self.runtime_params)
+        dlg.settings_changed.connect(self.update_runtime_params)
+        dlg.exec()
+
+    @Slot(sl.RuntimeParameters)
+    def update_runtime_params(self, new_params):
+        """
+        Updates the runtime parameters of the ZED camera application.
+
+        Args:
+            new_params (dict): A dictionary containing the new runtime parameters.
+
+        Displays:
+            Displays a dialog indicating that the runtime parameters have been updated.
+        """
+        self.runtime_params = new_params
+        dlg = AutoCloseDialog("Runtime Parameters Updated")
+        dlg.exec()
 
     def cv_to_qt(self, cv_image) -> QPixmap:
         """
