@@ -104,6 +104,10 @@ class ZEDCameraApp(QMainWindow):
         self.counter_reset_button.clicked.connect(self.reset_counter)
         self.counter_reset_button.setFocusPolicy(Qt.NoFocus)
 
+        # Sobel Power Input
+        self.sobel_power_label = QLabel("Sobel Power: ")
+        self.sobel_power_text = QLineEdit("1.0")
+
         # Display Format
 
         # Image Display Format
@@ -131,6 +135,9 @@ class ZEDCameraApp(QMainWindow):
         naming_toolbar.addSeparator()
         naming_toolbar.addWidget(self.display_format_label)
         naming_toolbar.addWidget(self.display_format_combo)
+        naming_toolbar.addSeparator()
+        naming_toolbar.addWidget(self.sobel_power_label)
+        naming_toolbar.addWidget(self.sobel_power_text)
 
         # Connect buttons
         self.save_image_button.clicked.connect(self.save_images)
@@ -187,7 +194,7 @@ class ZEDCameraApp(QMainWindow):
             elif self.display_format_combo.currentText() == "Depth":
                 self.image_label.setPixmap(qt_depth)
             elif self.display_format_combo.currentText() == "Sobel":
-                sobel_image = sobel_filter(depth_ocv)
+                sobel_image = sobel_filter(depth_ocv, power=float(self.sobel_power_text.text()))
                 qt_sobel = self.cv_to_qt(sobel_image)
                 self.image_label.setPixmap(qt_sobel)
 

@@ -4,7 +4,7 @@ import pyzed.sl as sl
 from typing import Union
 
 
-def sobel_filter(img: np.ndarray, ksize: int = 3) -> np.ndarray:
+def sobel_filter(img: np.ndarray, ksize: int=3, power: float=1.0) -> np.ndarray:
     """
     Applies the Sobel filter to an input image to detect edges.
 
@@ -23,7 +23,7 @@ def sobel_filter(img: np.ndarray, ksize: int = 3) -> np.ndarray:
     sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=ksize)
     sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=ksize)
     sobel = np.sqrt(sobelx ** 2 + sobely ** 2)
-    sobel_norm = (sobel * 255 / sobel.max()).astype(np.uint8)
+    sobel_norm = (255 * ((sobel/ sobel.max()) ** power)).astype(np.uint8)
     return sobel_norm
 
 
