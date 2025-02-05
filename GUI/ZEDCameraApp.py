@@ -32,6 +32,7 @@ class ZEDCameraApp(QMainWindow):
         self.init.depth_minimum_distance = 2010
         self.init.depth_maximum_distance = 2520
         
+        # Depth estimation turns on positional tracking, set as static
         tracking_params = sl.PositionalTrackingParameters()
         tracking_params.set_as_static = True
 
@@ -402,9 +403,10 @@ class ZEDCameraApp(QMainWindow):
             Path: The constructed path to the save folder.
         """
         subj_folder = self.folder_path
+        subject = subj_folder.name
         name = self.name_text.text()
         counter = self.counter_text.text().zfill(2)
-        folder_name = f"{name}_{counter}"
+        folder_name = f"{subject}_{name}_{counter}"
         return subj_folder / folder_name
     
     def keyPressEvent(self, event):

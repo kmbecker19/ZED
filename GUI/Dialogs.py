@@ -252,7 +252,7 @@ class RunTimeParamDialog(QDialog):
         if apply_button:
             apply_button.clicked.connect(self.apply_settings)
         if reset_button:
-            reset_button.clicked.connect(lambda: self.reset_params())
+            reset_button.clicked.connect(self.reset_params)
 
         # Layout
         layout = QVBoxLayout()
@@ -289,6 +289,13 @@ class RunTimeParamDialog(QDialog):
         self.settings_changed.emit(self.params)
 
     def reset_params(self):
+        """
+        Resets the parameters of the GUI dialog to their default values.
+
+        This method sets the fill mode combo box to its first item, 
+        sets the confidence box text to "95", sets the texture confidence 
+        box text to "100", and applies these settings.
+        """
         self.fill_mode_combo.setCurrentIndex(0)
         self.confidence_box.setText("95")
         self.texture_confidence_box.setText("100")
