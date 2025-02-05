@@ -58,6 +58,7 @@ class ZEDCameraApp(QMainWindow):
         self.depth_image_zed = sl.Mat(self.image_size.width, self.image_size.height, sl.MAT_TYPE.U8_C4)
         # For Raw depth data
         self.depth_map_zed = sl.Mat(self.image_size.width, self.image_size.height)
+        self.point_cloud_zed = sl.Mat()
 
         # GUI Elements - Image Display and save button
         self.image_label = QLabel("Camera Feed")
@@ -178,6 +179,7 @@ class ZEDCameraApp(QMainWindow):
             self.zed.retrieve_image(self.image_zed, sl.VIEW.LEFT, sl.MEM.CPU, self.image_size)
             self.zed.retrieve_image(self.depth_image_zed, sl.VIEW.DEPTH, sl.MEM.CPU, self.image_size)
             self.zed.retrieve_measure(self.depth_map_zed, sl.MEASURE.DEPTH)
+            self.zed.retrieve_measure(self.point_cloud_zed, sl.MEASURE.XYZRGBA)
             self.timestamp = self.zed.get_timestamp(sl.TIME_REFERENCE.IMAGE)
 
             # Convert to OpenCV format
@@ -291,6 +293,7 @@ class ZEDCameraApp(QMainWindow):
         image_rgb = self.image_zed.get_data()
         image_depth = self.depth_image_zed.get_data()
         depth_map = self.depth_map_zed.get_data()
+        point_cloud = self.point_cloud_zed.get_data()
 
         # Raise a dialog if the user has not selected a subject folder
         try:
@@ -305,15 +308,19 @@ class ZEDCameraApp(QMainWindow):
 
         filename_rgb = Path(f"RGB_{self.get_filename()}")
         filename_depth = Path(f"DEPTH_{self.get_filename()}")
+        filename_cloud = Path(f"CLOUD_{self.get_filename()}")
 
         path_rgb = save_folder / filename_rgb
         path_depth = save_folder / filename_depth
+        path_cloud = save_folder / filename_cloud
 
         # Save Image
         cv2.imwrite(path_rgb.with_suffix(".png"), image_rgb)
         cv2.imwrite(path_depth.with_suffix(".png"), image_depth)
         # Save Depth Map
         np.save(path_depth.with_suffix(".npy"), depth_map)
+        # Save Point cloud data
+        np.save(path_cloud.with_suffix(".npy"), point_cloud)
         # Save Metadata
         self.save_metadata(save_folder)
 
