@@ -292,7 +292,14 @@ class ZEDCameraApp(QMainWindow):
         image_depth = self.depth_image_zed.get_data()
         depth_map = self.depth_map_zed.get_data()
 
-        save_folder = self.get_save_folder()
+        # Raise a dialog if the user has not selected a subject folder
+        try:
+            save_folder = self.get_save_folder()
+        except AttributeError:
+            dlg = AutoCloseDialog("Please select a subject folder", "Error Saving Images")
+            dlg.exec()
+            return
+        
         if not save_folder.exists():
             save_folder.mkdir(parents=True)
 
@@ -408,6 +415,8 @@ class ZEDCameraApp(QMainWindow):
         The resulting folder name is in the format: "{name}_{counter}".
         Returns:
             Path: The constructed path to the save folder.
+        Raises:
+            AttributeError: If the user has not chosen a subject folder and `folder_path` is not set.
         """
         subj_folder = self.folder_path
         subject = subj_folder.name
