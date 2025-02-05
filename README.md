@@ -30,7 +30,7 @@ This program is a GUI interface for operating the ZED depth camera. It will allo
 
 ## Using the Interface
 
-> Make sure to include a screen capture of the interface here!
+![ZED_GUI_diagram](https://github.com/user-attachments/assets/9e25e511-51ca-4835-8242-8d790cbd852b)
 
 The interface has the following components:
 
