@@ -376,9 +376,11 @@ class ZEDCameraApp(QMainWindow):
         }
         metadata["init_parameters"] = param2dict(self.init)
         metadata["runtime_parameters"] = param2dict(self.runtime_params)
-        # Save Metadata to file
+        # Save Metadata to text and json files
         save_file = dest / "metadata.txt"
         with save_file.open("w") as file:
+            json.dump(metadata, file, indent=4)
+        with save_file.with_suffix(".json").open("w") as file:
             json.dump(metadata, file, indent=4)
 
     def closeEvent(self, event):
