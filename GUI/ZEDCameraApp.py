@@ -216,7 +216,6 @@ class ZEDCameraApp(QMainWindow):
                 except ValueError:
                     pass
                 
-
     def open_camera_settings(self):
         """
         Opens the camera settings dialog.
