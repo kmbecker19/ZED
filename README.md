@@ -14,7 +14,9 @@ This program is a GUI interface for operating the ZED depth camera. It will allo
 
 - First, make a conda environment for the program using the following command:
 
-`conda create -n zed-gui python=3.8 pip numpy cython opencv pyopengl pyside6 requests -c conda-forge`
+```bash
+conda create -n zed-gui python=3.8 pip numpy cython opencv pyopengl pyside6 requests -c conda-forge
+```
 
 - Next, make sure to download the ZED SDK on [stereolabs.com](https://www.stereolabs.com/). Follow instructions for downloading the Python API.
 
@@ -24,13 +26,17 @@ This program is a GUI interface for operating the ZED depth camera. It will allo
 
 - First, install the necessary requirements for the application using pip:
 
-`pip install numpy cython opencv-python pyopengl pyside6 requests`
+```bash
+pip install numpy cython opencv-python pyopengl pyside6 requests
+```
 
 - Next, make sure to download the ZED SDK on [stereolabs.com](https://www.stereolabs.com/). Follow instructions for downloading the Python API.
 
 ## Using the Interface
 
 ![ZED_GUI_diagram](https://github.com/user-attachments/assets/9e25e511-51ca-4835-8242-8d790cbd852b)
+
+### Components
 
 The interface has the following components:
 
@@ -44,4 +50,15 @@ The interface has the following components:
     - **Sobel**: Gradient-filtered depth camera video feed using OpenCV's `sobel` filter.
 6. **Sobel Power Field**: For changing the power of the sobel gradient filter, which impacts display output. Choose lower numbers (<0.5) for topography-style gradient lines.
 7. **Display**: The main display for the camera feed.
-8. **Save Image and Depth Map**: Capture the image from the camera feed, both RGB and depth, and save along with metadata.
+8. **Save Image and Depth Map**: Capture the image from the camera feed, both RGB and depth, and save along with metadata. To capture an image, either click here or press the Enter key.
+
+### Image Capture
+
+When you capture an image using this program, the following files will be saved into 
+your subject folder:
+
+- **2 PNG Files** containing the RGB image and visualized Depth camera image.
+- **2 Numpy Files** Containing the raw data for the depth image and 3D point-cloud map.
+- **2 Metadata Files** in text and JSON format containing the name, resolution,
+description, and timestamp of the image, along with the camera settings and runtime 
+parameters.
