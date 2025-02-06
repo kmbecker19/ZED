@@ -95,10 +95,13 @@ class ZEDCameraApp(QMainWindow):
         self.counter_label = QLabel("Counter: ")
         self.counter_text = QLineEdit("1")
         self.counter_text.setReadOnly(True)
+        self.counter_text.setFixedWidth(45)
         self.counter_minus_button = QPushButton("-")
+        self.counter_minus_button.setFixedWidth(25)
         self.counter_minus_button.clicked.connect(self.decrement_counter)
         self.counter_minus_button.setFocusPolicy(Qt.NoFocus)
         self.counter_plus_button = QPushButton("+")
+        self.counter_plus_button.setFixedWidth(25)
         self.counter_plus_button.clicked.connect(self.increment_counter)
         self.counter_plus_button.setFocusPolicy(Qt.NoFocus)
         self.counter_reset_button = QPushButton("Reset")
@@ -109,7 +112,6 @@ class ZEDCameraApp(QMainWindow):
         self.sobel_power_label = QLabel("Sobel Power: ")
         self.sobel_power_text = QLineEdit("1.0")
         self.sobel_power_text.setFixedWidth(45)
-    
 
         # Display Format
 
@@ -123,7 +125,6 @@ class ZEDCameraApp(QMainWindow):
         # Description Text Field
         self.description_label = QLabel("Description: ")
         self.description_text = QLineEdit()
-        self.description_text.setFocusPolicy(Qt.NoFocus)
 
         # Description Layout
         self.description_layout = QHBoxLayout()
