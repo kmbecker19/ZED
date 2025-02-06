@@ -66,7 +66,6 @@ class ZEDCameraApp(QMainWindow):
         self.save_image_button.setFixedHeight(self.save_image_button.sizeHint().height() * 2)
         
         # Menu Bar
-        self.setStatusBar(QStatusBar(self))
         menu = self.menuBar()
         settings_menu = menu.addMenu("&Settings")
         # Camera Settings Dialog
