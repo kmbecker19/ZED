@@ -3,7 +3,7 @@ import numpy as np
 import pyzed.sl as sl
 import cv2
 import json
-from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar
+from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar, QHBoxLayout
 from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
@@ -108,6 +108,8 @@ class ZEDCameraApp(QMainWindow):
         # Sobel Power Input
         self.sobel_power_label = QLabel("Sobel Power: ")
         self.sobel_power_text = QLineEdit("1.0")
+        self.sobel_power_text.setFixedWidth(45)
+    
 
         # Display Format
 
@@ -117,6 +119,16 @@ class ZEDCameraApp(QMainWindow):
         self.display_format_combo.addItems(["RGB", "Depth", "Sobel"])
         self.display_format_combo.setCurrentIndex(0)
         self.display_format_combo.setFocusPolicy(Qt.NoFocus)
+
+        # Description Text Field
+        self.description_label = QLabel("Description: ")
+        self.description_text = QLineEdit()
+        self.description_text.setFocusPolicy(Qt.NoFocus)
+
+        # Description Layout
+        self.description_layout = QHBoxLayout()
+        self.description_layout.addWidget(self.description_label)
+        self.description_layout.addWidget(self.description_text)
 
         # Image naming layout
         naming_toolbar = QToolBar("ToolBar")
@@ -146,6 +158,7 @@ class ZEDCameraApp(QMainWindow):
 
         # Layout
         layout = QVBoxLayout()
+        layout.addLayout(self.description_layout)
         layout.addWidget(self.image_label)
         layout.addWidget(self.save_image_button)
 
@@ -353,7 +366,8 @@ class ZEDCameraApp(QMainWindow):
         metadata["image_data"] = {
             "name" : self.get_filename(),
             "resolution": f"{self.image_zed.get_width()} x {self.image_zed.get_height()}",
-            "timestamp": str(self.timestamp.get_milliseconds())
+            "timestamp": str(self.timestamp.get_milliseconds()),
+            "description": self.description_text.text()
         }
         metadata["init_parameters"] = param2dict(self.init)
         metadata["runtime_parameters"] = param2dict(self.runtime_params)
