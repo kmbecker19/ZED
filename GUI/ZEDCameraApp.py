@@ -356,6 +356,7 @@ class ZEDCameraApp(QMainWindow):
                 - name (str): The filename of the image.
                 - resolution (str): The resolution of the image in the format "width x height".
                 - timestamp (str): The timestamp of the image in milliseconds.
+                - description (str): The description of the image.
             - init_parameters (dict): The initial camera settings.
             - runtime_parameters (dict): The runtime parameters of the camera.
 
