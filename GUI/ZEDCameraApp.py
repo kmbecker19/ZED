@@ -209,9 +209,13 @@ class ZEDCameraApp(QMainWindow):
             elif self.display_format_combo.currentText() == "Depth":
                 self.image_label.setPixmap(qt_depth)
             elif self.display_format_combo.currentText() == "Sobel":
-                sobel_image = sobel_filter(depth_ocv, power=float(self.sobel_power_text.text()))
-                qt_sobel = self.cv_to_qt(sobel_image)
-                self.image_label.setPixmap(qt_sobel)
+                try:
+                    sobel_image = sobel_filter(depth_ocv, power=float(self.sobel_power_text.text()))
+                    qt_sobel = self.cv_to_qt(sobel_image)
+                    self.image_label.setPixmap(qt_sobel)
+                except ValueError:
+                    pass
+                
 
     def open_camera_settings(self):
         """
