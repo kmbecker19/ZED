@@ -63,11 +63,11 @@ The interface has the following components:
 
 ### Image Capture
 
-When you capture an image using this program, the following files will be saved into 
+When you capture an image using this program, the following files will be saved into
 your subject folder:
 
 - **2 PNG Files** containing the RGB image and visualized Depth camera image.
 - **2 Numpy Files** Containing the raw data for the depth image and 3D point-cloud map.
 - **2 Metadata Files** in text and JSON format containing the name, resolution,
-description, and timestamp of the image, along with the camera settings and runtime 
+description, and timestamp of the image, along with the camera settings and runtime
 parameters.
