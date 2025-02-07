@@ -305,8 +305,8 @@ class RunTimeParamDialog(QDialog):
 
 class VideoSettingsDialog(QDialog):
     """
-    A dialog window for adjusting video settings.
-
+    A dialog for adjusting video settings.
+    
     This dialog allows the user to adjust the following video settings:
         - Brightness
         - Contrast
@@ -317,22 +317,20 @@ class VideoSettingsDialog(QDialog):
         - White Balance
         - Gain
         - Exposure
+        
+    It also includes options for enabling or disabling automatic adjustments for white balance, 
+    gain, and exposure.
 
     Attributes:
-        settings_changed (Signal): Signal emitted when settings are changed.
+        settings_changed (Signal): Signal emitted when the settings are changed.
         video_settings (Dict[sl.VIDEO_SETTINGS, float]): Dictionary containing the current video settings.
-
+    
     Methods:
-        __init__(video_settings: Dict[sl.VIDEO_SETTINGS, float]):
-            Initializes the dialog with the given video settings.
-        toggle_auto_white_balance():
-            Toggles the state of the white balance slider based on the auto checkbox.
-        toggle_auto_gain():
-            Toggles the state of the gain slider based on the auto checkbox.
-        toggle_auto_exposure():
-            Toggles the state of the exposure slider based on the auto checkbox.
-        apply_settings():
-            Applies the current settings from the sliders and checkboxes to the video settings dictionary and emits the settings_changed signal.
+        toggle_auto_white_balance(): Toggles the auto white balance setting.
+        toggle_auto_gain(): Toggles the auto gain setting.
+        toggle_auto_exposure(): Toggles the auto exposure setting.
+        apply_settings(): Applies the current settings from the sliders and checkboxes to the video settings.
+        get_default_settings() -> Dict[sl.VIDEO_SETTINGS, float]: Returns a dictionary of video settings with default values. (static method)
     """
     settings_changed = Signal(Dict[sl.VIDEO_SETTINGS, float])
 
