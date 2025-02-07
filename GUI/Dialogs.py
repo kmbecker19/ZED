@@ -500,4 +500,24 @@ class VideoSettingsDialog(QDialog):
         
         self.settings_changed.emit(self.video_settings)
 
+    @staticmethod
+    def get_default_settings() -> Dict[sl.VIDEO_SETTINGS, float]:
+        """
+        Returns a dictionary of video settings with default values.
+
+        Returns:
+            Dict[sl.VIDEO_SETTINGS, float]: Dictionary containing default video settings.
+        """
+        return {
+            sl.VIDEO_SETTINGS.BRIGHTNESS: 4,
+            sl.VIDEO_SETTINGS.CONTRAST: 4,
+            sl.VIDEO_SETTINGS.HUE: 4,
+            sl.VIDEO_SETTINGS.SATURATION: 4,
+            sl.VIDEO_SETTINGS.SHARPNESS: 4,
+            sl.VIDEO_SETTINGS.GAMMA: 4,
+            sl.VIDEO_SETTINGS.WHITEBALANCE: sl.VIDEO_SETTINGS_VALUE_AUTO,
+            sl.VIDEO_SETTINGS.GAIN: sl.VIDEO_SETTINGS_VALUE_AUTO,
+            sl.VIDEO_SETTINGS.EXPOSURE: sl.VIDEO_SETTINGS_VALUE_AUTO
+        }
+
         

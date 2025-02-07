@@ -295,8 +295,13 @@ class ZEDCameraApp(QMainWindow):
         to the update_video_settings method to handle any changes made in the dialog.
         Finally, it executes the dialog.
         """
-        # TODO: Open Dialog with default video settings - get settings from sl.Camera
-        dlg = VideoSettingsDialog()
+        # Get Current Video settings from camera
+        settings = VideoSettingsDialog.get_default_settings()
+        for key, value in settings.items():
+            settings[key] = self.zed.getCameraSettings(key)
+        
+        # Open Dialog with current video settings
+        dlg = VideoSettingsDialog(settings)
         dlg.settings_changed.connect(self.update_video_settings)
         dlg.exec()
 
@@ -312,7 +317,7 @@ class ZEDCameraApp(QMainWindow):
             new_params (Dict[sl.VIDEO_SETTINGS, float]): A dictionary where the keys are
             video settings (of type sl.VIDEO_SETTINGS) and the values are the desired
             settings values (of type float).
-            
+
         Raises:
             NotImplementedError: If there is an exception while updating the video settings,
             this error is raised indicating that the update was not implemented successfully.
