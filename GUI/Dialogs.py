@@ -419,4 +419,21 @@ class VideoSettingsDialog(QDialog):
         auto_exposure = self.exposure_auto_checkbox.isChecked()
         self.exposure_slider.setEnabled(not auto_exposure)
 
+    def apply_settings(self):
+        self.video_settings[sl.VIDEO_SETTINGS.BRIGHTNESS] = self.brightness_slider.value()
+        self.video_settings[sl.VIDEO_SETTINGS.CONTRAST] = self.contrast_slider.value()
+        self.video_settings[sl.VIDEO_SETTINGS.HUE] = self.hue_slider.value()
+        self.video_settings[sl.VIDEO_SETTINGS.SATURATION] = self.saturation_slider.value()
+        self.video_settings[sl.VIDEO_SETTINGS.SHARPNESS] = self.sharpness_slider.value()
+        self.video_settings[sl.VIDEO_SETTINGS.GAMMA] = self.gamma_slider.value()
+
+        # TODO: Find Correct way to set Auto settings
+        self.video_settings[sl.VIDEO_SETTINGS.WHITEBALANCE] = self.white_balance_slider.value() \
+            if not self.white_balance_auto_checkbox.isChecked() else "Auto"
+        self.video_settings[sl.VIDEO_SETTINGS.GAIN] = self.gain_slider.value() \
+            if not self.gain_auto_checkbox.isChecked() else "Auto"
+        self.video_settings[sl.VIDEO_SETTINGS.EXPOSURE] = self.exposure_slider.value() \
+            if not self.exposure_auto_checkbox.isChecked() else "Auto"
+        self.settings_changed.emit(self.video_settings)
+
         
