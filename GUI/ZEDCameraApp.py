@@ -300,8 +300,8 @@ class ZEDCameraApp(QMainWindow):
         dlg.settings_changed.connect(self.update_video_settings)
         dlg.exec()
 
-    @Slot(Dict[sl.VIDEO_SETTINGS, Union[float, str]])
-    def update_video_settings(self, new_params: Dict[sl.VIDEO_SETTINGS, Union[float, str]]):
+    @Slot(Dict[sl.VIDEO_SETTINGS, float])
+    def update_video_settings(self, new_params: Dict[sl.VIDEO_SETTINGS, float]):
         """
         Updates the video settings of the ZED camera.
 
@@ -314,6 +314,7 @@ class ZEDCameraApp(QMainWindow):
             NotImplementedError: If the method is not yet implemented.
         """
         raise NotImplementedError("Video Settings Update not implemented yet")
+    
     
     def cv_to_qt(self, cv_image) -> QPixmap:
         """

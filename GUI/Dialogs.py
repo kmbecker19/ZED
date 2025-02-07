@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QGridLayout, QLabel, QLineEdit, QVBoxLayout, QComboBox, QDialog, QDialogButtonBox, QSlider, QCheckBox
 from PySide6.QtCore import Signal, QTimer
 import pyzed.sl as sl
-from typing import Dict, Union
+from typing import Dict
 
 
 class MessageDialog(QDialog):
@@ -335,9 +335,9 @@ class VideoSettingsDialog(QDialog):
             Applies the current settings from the sliders and checkboxes to the video settings dictionary and emits the settings_changed signal.
     """
 
-    settings_changed = Signal(Dict[sl.VIDEO_SETTINGS, Union[float, str]])
+    settings_changed = Signal(Dict[sl.VIDEO_SETTINGS, float])
 
-    def __init__(self, video_settings: Dict[sl.VIDEO_SETTINGS, Union[float, str]]):
+    def __init__(self, video_settings: Dict[sl.VIDEO_SETTINGS, float]):
         super().__init__()
         self.setWindowTitle("Video Settings")
         self.video_settings = video_settings
@@ -491,13 +491,13 @@ class VideoSettingsDialog(QDialog):
         self.video_settings[sl.VIDEO_SETTINGS.SHARPNESS] = self.sharpness_slider.value()
         self.video_settings[sl.VIDEO_SETTINGS.GAMMA] = self.gamma_slider.value()
 
-        # TODO: Find Correct way to set Auto settings
+        # Change these settings to AUTO if the corresponding checkbox is checked
         self.video_settings[sl.VIDEO_SETTINGS.WHITEBALANCE] = self.white_balance_slider.value() \
-            if not self.white_balance_auto_checkbox.isChecked() else "Auto"
+            if not self.white_balance_auto_checkbox.isChecked() else sl.VIDEO_SETTINGS_VALUE_AUTO
         self.video_settings[sl.VIDEO_SETTINGS.GAIN] = self.gain_slider.value() \
-            if not self.gain_auto_checkbox.isChecked() else "Auto"
+            if not self.gain_auto_checkbox.isChecked() else sl.VIDEO_SETTINGS_VALUE_AUTO
         self.video_settings[sl.VIDEO_SETTINGS.EXPOSURE] = self.exposure_slider.value() \
-            if not self.exposure_auto_checkbox.isChecked() else "Auto"
+            if not self.exposure_auto_checkbox.isChecked() else sl.VIDEO_SETTINGS_VALUE_AUTO
         self.settings_changed.emit(self.video_settings)
 
         
