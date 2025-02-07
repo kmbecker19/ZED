@@ -315,7 +315,6 @@ class ZEDCameraApp(QMainWindow):
         """
         raise NotImplementedError("Video Settings Update not implemented yet")
     
-    
     def cv_to_qt(self, cv_image) -> QPixmap:
         """
         Converts an OpenCV image to a QPixmap for use in a Qt application.

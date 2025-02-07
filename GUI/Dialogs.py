@@ -334,7 +334,6 @@ class VideoSettingsDialog(QDialog):
         apply_settings():
             Applies the current settings from the sliders and checkboxes to the video settings dictionary and emits the settings_changed signal.
     """
-
     settings_changed = Signal(Dict[sl.VIDEO_SETTINGS, float])
 
     def __init__(self, video_settings: Dict[sl.VIDEO_SETTINGS, float]):
@@ -498,6 +497,7 @@ class VideoSettingsDialog(QDialog):
             if not self.gain_auto_checkbox.isChecked() else sl.VIDEO_SETTINGS_VALUE_AUTO
         self.video_settings[sl.VIDEO_SETTINGS.EXPOSURE] = self.exposure_slider.value() \
             if not self.exposure_auto_checkbox.isChecked() else sl.VIDEO_SETTINGS_VALUE_AUTO
+        
         self.settings_changed.emit(self.video_settings)
 
         
