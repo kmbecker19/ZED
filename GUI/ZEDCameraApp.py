@@ -7,8 +7,9 @@ from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, 
 from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
-from Dialogs import CameraSettingsDialog, ImageSavedDialog, RunTimeParamDialog, AutoCloseDialog
+from Dialogs import CameraSettingsDialog, ImageSavedDialog, RunTimeParamDialog, AutoCloseDialog, VideoSettingsDialog
 from Utils import sobel_filter, param2dict
+from typing import Dict, Union
 
 
 class ZEDCameraApp(QMainWindow):
@@ -72,6 +73,10 @@ class ZEDCameraApp(QMainWindow):
         camera_settings_action = QAction("Camera...", self)
         camera_settings_action.triggered.connect(self.open_camera_settings)
         settings_menu.addAction(camera_settings_action)
+        # Video Settings Dialog
+        video_settings_action = QAction("Video...", self)
+        video_settings_action.triggered.connect(self.open_video_settings)
+        settings_menu.addAction(video_settings_action)
         # Runtime Params Dialog
         runtime_params_action = QAction("Runtime...", self)
         runtime_params_action.triggered.connect(self.open_runtime_params)
@@ -281,6 +286,34 @@ class ZEDCameraApp(QMainWindow):
         dlg = AutoCloseDialog("Runtime Parameters Updated")
         dlg.exec()
 
+    def open_video_settings(self):
+        """
+        Opens a dialog to modify video settings.
+
+        This method creates an instance of VideoSettingsDialog, passing the current
+        video settings to it. It connects the dialog's settings_changed signal
+        to the update_video_settings method to handle any changes made in the dialog.
+        Finally, it executes the dialog.
+        """
+        dlg = VideoSettingsDialog(self.init)
+        dlg.settings_changed.connect(self.update_video_settings)
+        dlg.exec()
+
+    @Slot(Dict[sl.VIDEO_SETTINGS, Union[float, str]])
+    def update_video_settings(self, new_params: Dict[sl.VIDEO_SETTINGS, Union[float, str]]):
+        """
+        Updates the video settings of the ZED camera.
+        
+        Args:
+            new_params (Dict[sl.VIDEO_SETTINGS, Union[float, str]]): 
+                A dictionary containing the new video settings to be applied. 
+                The keys are of type `sl.VIDEO_SETTINGS` and the values can be either 
+                `float` or `str` depending on the setting.
+        Raises:
+            NotImplementedError: If the method is not yet implemented.
+        """
+        raise NotImplementedError("Video Settings Update not implemented yet")
+    
     def cv_to_qt(self, cv_image) -> QPixmap:
         """
         Converts an OpenCV image to a QPixmap for use in a Qt application.
