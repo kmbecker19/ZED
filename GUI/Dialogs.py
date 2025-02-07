@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QGridLayout, QLabel, QLineEdit, QVBoxLayout, QComboBox, QDialog, QDialogButtonBox, QSlider
+from PySide6.QtWidgets import QGridLayout, QLabel, QLineEdit, QVBoxLayout, QComboBox, QDialog, QDialogButtonBox, QSlider, QCheckBox
 from PySide6.QtCore import Signal, QTimer
 import pyzed.sl as sl
 from typing import Dict
@@ -352,18 +352,29 @@ class VideoSettingsDialog(QDialog):
         self.white_balance_slider = QSlider()
         self.white_balance_slider.setRange(2800, 6500)
         self.white_balance_slider.setValue(video_settings[sl.VIDEO_SETTINGS.WHITEBALANCE])
+        self.white_balance_auto_checkbox = QCheckBox("Auto")
 
         # Gain
         gain_label = QLabel("Gain:")
         self.gain_slider = QSlider()
         self.gain_slider.setRange(0, 100)
         self.gain_slider.setValue(video_settings[sl.VIDEO_SETTINGS.GAIN])
+        self.gain_auto_checkbox = QCheckBox("Auto")
 
         # Exposure
         exposure_label = QLabel("Exposure:")
         self.exposure_slider = QSlider()
         self.exposure_slider.setRange(0, 100)
         self.exposure_slider.setValue(video_settings[sl.VIDEO_SETTINGS.EXPOSURE])
+        self.exposure_auto_checkbox = QCheckBox("Auto")
+
+        # Button Box
+        QBtn = QDialogButtonBox.Apply | QDialogButtonBox.Cancel
+        self.buttonBox = QDialogButtonBox(QBtn)
+        self.buttonBox.rejected.connect(self.reject)
+        apply_button = self.buttonBox.button(QDialogButtonBox.Apply)
+        if apply_button:
+            apply_button.clicked.connect(self.apply_settings)
 
 
 
