@@ -295,7 +295,8 @@ class ZEDCameraApp(QMainWindow):
         to the update_video_settings method to handle any changes made in the dialog.
         Finally, it executes the dialog.
         """
-        dlg = VideoSettingsDialog(self.init)
+        # TODO: Open Dialog with default video settings - get settings from sl.Camera
+        dlg = VideoSettingsDialog()
         dlg.settings_changed.connect(self.update_video_settings)
         dlg.exec()
 
@@ -303,7 +304,7 @@ class ZEDCameraApp(QMainWindow):
     def update_video_settings(self, new_params: Dict[sl.VIDEO_SETTINGS, Union[float, str]]):
         """
         Updates the video settings of the ZED camera.
-        
+
         Args:
             new_params (Dict[sl.VIDEO_SETTINGS, Union[float, str]]): 
                 A dictionary containing the new video settings to be applied. 
