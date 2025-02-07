@@ -353,6 +353,7 @@ class VideoSettingsDialog(QDialog):
         self.white_balance_slider.setRange(2800, 6500)
         self.white_balance_slider.setValue(video_settings[sl.VIDEO_SETTINGS.WHITEBALANCE])
         self.white_balance_auto_checkbox = QCheckBox("Auto")
+        self.white_balance_auto_checkbox.checkStateChanged.connect(self.toggle_auto_white_balance)
 
         # Gain
         gain_label = QLabel("Gain:")
@@ -360,6 +361,7 @@ class VideoSettingsDialog(QDialog):
         self.gain_slider.setRange(0, 100)
         self.gain_slider.setValue(video_settings[sl.VIDEO_SETTINGS.GAIN])
         self.gain_auto_checkbox = QCheckBox("Auto")
+        self.gain_auto_checkbox.checkStateChanged.connect(self.toggle_auto_gain)
 
         # Exposure
         exposure_label = QLabel("Exposure:")
@@ -367,6 +369,7 @@ class VideoSettingsDialog(QDialog):
         self.exposure_slider.setRange(0, 100)
         self.exposure_slider.setValue(video_settings[sl.VIDEO_SETTINGS.EXPOSURE])
         self.exposure_auto_checkbox = QCheckBox("Auto")
+        self.exposure_auto_checkbox.checkStateChanged.connect(self.toggle_auto_exposure)
 
         # Button Box
         QBtn = QDialogButtonBox.Apply | QDialogButtonBox.Cancel
@@ -376,6 +379,16 @@ class VideoSettingsDialog(QDialog):
         if apply_button:
             apply_button.clicked.connect(self.apply_settings)
 
+    def toggle_auto_white_balance(self):
+        auto_white_balance = self.white_balance_auto_checkbox.isChecked()
+        self.white_balance_slider.setEnabled(not auto_white_balance)
 
+    def toggle_auto_gain(self):
+        auto_gain = self.gain_auto_checkbox.isChecked()
+        self.gain_slider.setEnabled(not auto_gain)
+    
+    def toggle_auto_exposure(self):
+        auto_exposure = self.exposure_auto_checkbox.isChecked()
+        self.exposure_slider.setEnabled(not auto_exposure)
 
         
