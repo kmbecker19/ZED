@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QGridLayout, QLabel, QLineEdit, QVBoxLayout, QComboBox, QDialog, QDialogButtonBox, QSlider, QCheckBox
 from PySide6.QtCore import Signal, QTimer
 import pyzed.sl as sl
-from typing import Dict
+from typing import Dict, Union
 
 
 class MessageDialog(QDialog):
@@ -302,7 +302,7 @@ class RunTimeParamDialog(QDialog):
         self.texture_confidence_box.setText("100")
         self.apply_settings()
         
-        
+
 class VideoSettingsDialog(QDialog):
     """
     A dialog window for adjusting video settings.
@@ -335,9 +335,9 @@ class VideoSettingsDialog(QDialog):
             Applies the current settings from the sliders and checkboxes to the video settings dictionary and emits the settings_changed signal.
     """
 
-    settings_changed = Signal(Dict[sl.VIDEO_SETTINGS, float])
+    settings_changed = Signal(Dict[sl.VIDEO_SETTINGS, Union[float, str]])
 
-    def __init__(self, video_settings: Dict[sl.VIDEO_SETTINGS, float]):
+    def __init__(self, video_settings: Dict[sl.VIDEO_SETTINGS, Union[float, str]]):
         super().__init__()
         self.setWindowTitle("Video Settings")
         self.video_settings = video_settings
