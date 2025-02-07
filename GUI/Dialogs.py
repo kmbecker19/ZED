@@ -302,7 +302,38 @@ class RunTimeParamDialog(QDialog):
         self.texture_confidence_box.setText("100")
         self.apply_settings()
         
+        
 class VideoSettingsDialog(QDialog):
+    """
+    A dialog window for adjusting video settings.
+
+    This dialog allows the user to adjust the following video settings:
+        - Brightness
+        - Contrast
+        - Hue
+        - Saturation
+        - Sharpness
+        - Gamma
+        - White Balance
+        - Gain
+        - Exposure
+
+    Attributes:
+        settings_changed (Signal): Signal emitted when settings are changed.
+        video_settings (Dict[sl.VIDEO_SETTINGS, float]): Dictionary containing the current video settings.
+
+    Methods:
+        __init__(video_settings: Dict[sl.VIDEO_SETTINGS, float]):
+            Initializes the dialog with the given video settings.
+        toggle_auto_white_balance():
+            Toggles the state of the white balance slider based on the auto checkbox.
+        toggle_auto_gain():
+            Toggles the state of the gain slider based on the auto checkbox.
+        toggle_auto_exposure():
+            Toggles the state of the exposure slider based on the auto checkbox.
+        apply_settings():
+            Applies the current settings from the sliders and checkboxes to the video settings dictionary and emits the settings_changed signal.
+    """
 
     settings_changed = Signal(Dict[sl.VIDEO_SETTINGS, float])
 
@@ -408,18 +439,51 @@ class VideoSettingsDialog(QDialog):
         self.setLayout(main_layout)
 
     def toggle_auto_white_balance(self):
+        """
+        Toggles the auto white balance setting.
+
+        This method checks the state of the white balance auto checkbox and 
+        enables or disables the white balance slider accordingly. If the 
+        auto white balance is enabled, the slider is disabled, and if the 
+        auto white balance is disabled, the slider is enabled.
+        """
         auto_white_balance = self.white_balance_auto_checkbox.isChecked()
         self.white_balance_slider.setEnabled(not auto_white_balance)
 
     def toggle_auto_gain(self):
+        """
+        Toggles the auto gain setting for the gain slider.
+
+        If the auto gain checkbox is checked, the gain slider is disabled.
+        If the auto gain checkbox is unchecked, the gain slider is enabled.
+        """
         auto_gain = self.gain_auto_checkbox.isChecked()
         self.gain_slider.setEnabled(not auto_gain)
     
     def toggle_auto_exposure(self):
+        """
+        Toggles the auto exposure setting.
+
+        This method checks the state of the auto exposure checkbox and enables or disables
+        the exposure slider accordingly. If auto exposure is enabled, the exposure slider
+        is disabled. If auto exposure is disabled, the exposure slider is enabled.
+        """
         auto_exposure = self.exposure_auto_checkbox.isChecked()
         self.exposure_slider.setEnabled(not auto_exposure)
 
     def apply_settings(self):
+        """
+        Apply the current settings from the sliders and checkboxes to the video settings.
+
+        This method updates the `video_settings` dictionary with the current values from the
+        sliders for brightness, contrast, hue, saturation, sharpness, and gamma. It also sets
+        the white balance, gain, and exposure settings based on the corresponding sliders and
+        checkboxes. If the auto checkbox for white balance, gain, or exposure is checked, the
+        setting is set to "Auto".
+
+        Emits:
+            settings_changed (dict): Signal emitted with the updated video settings.
+        """
         self.video_settings[sl.VIDEO_SETTINGS.BRIGHTNESS] = self.brightness_slider.value()
         self.video_settings[sl.VIDEO_SETTINGS.CONTRAST] = self.contrast_slider.value()
         self.video_settings[sl.VIDEO_SETTINGS.HUE] = self.hue_slider.value()
