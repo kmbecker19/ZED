@@ -305,15 +305,24 @@ class ZEDCameraApp(QMainWindow):
         """
         Updates the video settings of the ZED camera.
 
+        This method takes a dictionary of video settings and their corresponding values,
+        and applies these settings to the ZED camera.
+
         Args:
-            new_params (Dict[sl.VIDEO_SETTINGS, Union[float, str]]): 
-                A dictionary containing the new video settings to be applied. 
-                The keys are of type `sl.VIDEO_SETTINGS` and the values can be either 
-                `float` or `str` depending on the setting.
+            new_params (Dict[sl.VIDEO_SETTINGS, float]): A dictionary where the keys are
+            video settings (of type sl.VIDEO_SETTINGS) and the values are the desired
+            settings values (of type float).
+            
         Raises:
-            NotImplementedError: If the method is not yet implemented.
+            NotImplementedError: If there is an exception while updating the video settings,
+            this error is raised indicating that the update was not implemented successfully.
         """
-        raise NotImplementedError("Video Settings Update not implemented yet")
+        try:
+            for key, value in new_params.items():
+                self.zed.setCameraSettings(key, value)
+        except Exception as e:
+            print("Encountered Exception while updating video settings: ", e)
+            raise NotImplementedError("Video Settings Update not implemented successfully yet")
     
     def cv_to_qt(self, cv_image) -> QPixmap:
         """
