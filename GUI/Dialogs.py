@@ -1,7 +1,8 @@
 from PySide6.QtWidgets import QGridLayout, QLabel, QLineEdit, QVBoxLayout, QComboBox, QDialog, QDialogButtonBox, QSlider, QCheckBox, QWidget
 from PySide6.QtCore import Signal, QTimer, Qt
 import pyzed.sl as sl
-from typing import Dict
+from typing import Dict, Union
+import pprint
 
 
 class MessageDialog(QDialog):
@@ -337,7 +338,14 @@ class VideoSettingsDialog(QDialog):
     def __init__(self, video_settings: Dict[sl.VIDEO_SETTINGS, float]):
         super().__init__()
         self.setWindowTitle("Video Settings")
-        self.video_settings = video_settings
+        mapping = self.get_sl_mapping()
+        self.video_settings = {}
+        # Set up Video Settings dictionary
+        for key, value in video_settings.items():
+            if key in mapping:
+                self.video_settings[mapping[key]] = value
+        
+        pprint.pp(self.video_settings)
 
         # Brightness
         brightness_label = QLabel("Brightness:")
@@ -532,19 +540,19 @@ class VideoSettingsDialog(QDialog):
         Emits:
             settings_changed (dict): Signal emitted with the updated video settings.
         """
-        self.video_settings[sl.VIDEO_SETTINGS.BRIGHTNESS] = self.brightness_slider.value()
-        self.video_settings[sl.VIDEO_SETTINGS.CONTRAST] = self.contrast_slider.value()
-        self.video_settings[sl.VIDEO_SETTINGS.HUE] = self.hue_slider.value()
-        self.video_settings[sl.VIDEO_SETTINGS.SATURATION] = self.saturation_slider.value()
-        self.video_settings[sl.VIDEO_SETTINGS.SHARPNESS] = self.sharpness_slider.value()
-        self.video_settings[sl.VIDEO_SETTINGS.GAMMA] = self.gamma_slider.value()
+        self.video_settings["Brightness"] = self.brightness_slider.value()
+        self.video_settings["Contrast"] = self.contrast_slider.value()
+        self.video_settings["Hue"] = self.hue_slider.value()
+        self.video_settings["Saturation"] = self.saturation_slider.value()
+        self.video_settings["Sharpness"] = self.sharpness_slider.value()
+        self.video_settings["Gamma"] = self.gamma_slider.value()
 
         # Change these settings to AUTO if the corresponding checkbox is checked
-        self.video_settings[sl.VIDEO_SETTINGS.WHITEBALANCE_TEMPERATURE] = self.white_balance_slider.value() \
+        self.video_settings["White Balance"] = self.white_balance_slider.value() \
             if not self.white_balance_auto_checkbox.isChecked() else -1
-        self.video_settings[sl.VIDEO_SETTINGS.GAIN] = self.gain_slider.value() \
+        self.video_settings["Gain"] = self.gain_slider.value() \
             if not self.gain_auto_checkbox.isChecked() else -1
-        self.video_settings[sl.VIDEO_SETTINGS.EXPOSURE] = self.exposure_slider.value() \
+        self.video_settings["Exposure"] = self.exposure_slider.value() \
             if not self.exposure_auto_checkbox.isChecked() else -1
         
         self.settings_changed.emit(self.video_settings)
@@ -568,6 +576,31 @@ class VideoSettingsDialog(QDialog):
             sl.VIDEO_SETTINGS.WHITEBALANCE_AUTO: 1,
             sl.VIDEO_SETTINGS.GAIN: -1,
             sl.VIDEO_SETTINGS.EXPOSURE: -1
+        }
+    
+    @staticmethod
+    def get_sl_mapping() -> Dict[Union[str, sl.VIDEO_SETTINGS], Union[sl.VIDEO_SETTINGS, str]]:
+        return {
+            "Brightness": sl.VIDEO_SETTINGS.BRIGHTNESS,
+            "Contrast": sl.VIDEO_SETTINGS.CONTRAST,
+            "Hue": sl.VIDEO_SETTINGS.HUE,
+            "Saturation": sl.VIDEO_SETTINGS.SATURATION,
+            "Sharpness": sl.VIDEO_SETTINGS.SHARPNESS,
+            "Gamma": sl.VIDEO_SETTINGS.GAMMA,
+            "White Balance": sl.VIDEO_SETTINGS.WHITEBALANCE_TEMPERATURE,
+            "White Balance Auto": sl.VIDEO_SETTINGS.WHITEBALANCE_AUTO,
+            "Gain": sl.VIDEO_SETTINGS.GAIN,
+            "Exposure": sl.VIDEO_SETTINGS.EXPOSURE,
+            sl.VIDEO_SETTINGS.BRIGHTNESS: "Brightness",
+            sl.VIDEO_SETTINGS.CONTRAST: "Contrast",
+            sl.VIDEO_SETTINGS.HUE: "Hue",
+            sl.VIDEO_SETTINGS.SATURATION: "Saturation",
+            sl.VIDEO_SETTINGS.SHARPNESS: "Sharpness",
+            sl.VIDEO_SETTINGS.GAMMA: "Gamma",
+            sl.VIDEO_SETTINGS.WHITEBALANCE_TEMPERATURE: "White Balance",
+            sl.VIDEO_SETTINGS.WHITEBALANCE_AUTO: "White Balance Auto",
+            sl.VIDEO_SETTINGS.GAIN: "Gain",
+            sl.VIDEO_SETTINGS.EXPOSURE: "Exposure"
         }
 
         

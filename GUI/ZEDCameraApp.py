@@ -307,7 +307,7 @@ class ZEDCameraApp(QMainWindow):
         dlg.exec()
 
     @Slot(dict)
-    def update_video_settings(self, new_params: Dict[sl.VIDEO_SETTINGS, float]):
+    def update_video_settings(self, new_params):
         """
         Updates the video settings of the ZED camera.
 
@@ -323,12 +323,14 @@ class ZEDCameraApp(QMainWindow):
             NotImplementedError: If there is an exception while updating the video settings,
             this error is raised indicating that the update was not implemented successfully.
         """
-        try:
-            for key, value in new_params.items():
-                self.zed.set_camera_settings(key, value)
-        except Exception as e:
-            print("Encountered Exception while updating video settings: ", e)
-            raise NotImplementedError("Video Settings Update not implemented successfully yet")
+        print("Updating Video Settings")
+        print(str(new_params))
+        for key, value in new_params.items():
+            status = self.zed.set_camera_settings(key, value)
+            if status == sl.ERROR_CODE.SUCCESS:
+                print(f"Updated {key} to {value}")
+            else:
+                print(f"Failed to update {key} to {value}")
     
     def cv_to_qt(self, cv_image) -> QPixmap:
         """
