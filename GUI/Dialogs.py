@@ -413,8 +413,8 @@ class VideoSettingsDialog(QDialog):
         self.exposure_slider = QSlider(Qt.Orientation.Horizontal)
         self.exposure_slider.setRange(0, 100)
         self.exposure_slider.setValue(video_settings[sl.VIDEO_SETTINGS.EXPOSURE])
-        self.exposure_slider.valueChanged.connect(lambda: self.update_label(self.exposure_slider, exposure_label))
-        exposure_label = QLabel(str(self.exposure_slider.value()))
+        exposure_value = QLabel(str(self.exposure_slider.value()))
+        self.exposure_slider.valueChanged.connect(lambda: self.update_label(self.exposure_slider, exposure_value))
         self.exposure_auto_checkbox = QCheckBox("Auto")
         self.exposure_auto_checkbox.stateChanged.connect(self.toggle_auto_exposure)
 
