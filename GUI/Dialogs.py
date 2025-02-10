@@ -440,12 +440,15 @@ class VideoSettingsDialog(QDialog):
             self.exposure_auto_checkbox.setChecked(True)
 
         # Button Box
-        QBtn = QDialogButtonBox.Apply | QDialogButtonBox.Cancel
+        QBtn = QDialogButtonBox.Apply | QDialogButtonBox.Cancel | QDialogButtonBox.Reset
         self.buttonBox = QDialogButtonBox(QBtn)
         self.buttonBox.rejected.connect(self.reject)
         apply_button = self.buttonBox.button(QDialogButtonBox.Apply)
         if apply_button:
             apply_button.clicked.connect(self.apply_settings)
+        reset_button = self.buttonBox.button(QDialogButtonBox.Reset)
+        if reset_button:
+            reset_button.clicked.connect(self.reset_settings)
         
         # Layout
         main_layout = QVBoxLayout()
@@ -557,6 +560,31 @@ class VideoSettingsDialog(QDialog):
         
         self.settings_changed.emit(self.video_settings)
 
+    def reset_settings(self):
+        """
+        Reset the video settings to their default values.
+
+        This method resets the video settings to their default values and applies the changes.
+        """
+        default_settings = self.get_default_settings()
+        
+        # Reset Slider Values
+        self.brightness_slider.setValue(default_settings[sl.VIDEO_SETTINGS.BRIGHTNESS])
+        self.contrast_slider.setValue(default_settings[sl.VIDEO_SETTINGS.CONTRAST])
+        self.hue_slider.setValue(default_settings[sl.VIDEO_SETTINGS.HUE])
+        self.saturation_slider.setValue(default_settings[sl.VIDEO_SETTINGS.SATURATION])
+        self.sharpness_slider.setValue(default_settings[sl.VIDEO_SETTINGS.SHARPNESS])
+        self.gamma_slider.setValue(default_settings[sl.VIDEO_SETTINGS.GAMMA])
+        self.white_balance_slider.setValue(default_settings[sl.VIDEO_SETTINGS.WHITEBALANCE_TEMPERATURE])
+        self.gain_slider.setValue(default_settings[sl.VIDEO_SETTINGS.GAIN])
+        self.exposure_slider.setValue(default_settings[sl.VIDEO_SETTINGS.EXPOSURE])
+
+        # Reset Auto Checkboxes
+        self.white_balance_auto_checkbox.setChecked(default_settings[sl.VIDEO_SETTINGS.WHITEBALANCE_AUTO] == 1)
+        self.gain_auto_checkbox.setChecked(default_settings[sl.VIDEO_SETTINGS.GAIN] == -1)
+        self.exposure_auto_checkbox.setChecked(default_settings[sl.VIDEO_SETTINGS.EXPOSURE] == -1)
+
+
     @staticmethod
     def get_default_settings() -> Dict[sl.VIDEO_SETTINGS, float]:
         """
@@ -574,8 +602,8 @@ class VideoSettingsDialog(QDialog):
             sl.VIDEO_SETTINGS.GAMMA: 4,
             sl.VIDEO_SETTINGS.WHITEBALANCE_TEMPERATURE: 4600,
             sl.VIDEO_SETTINGS.WHITEBALANCE_AUTO: 1,
-            sl.VIDEO_SETTINGS.GAIN: -1,
-            sl.VIDEO_SETTINGS.EXPOSURE: -1
+            sl.VIDEO_SETTINGS.GAIN: 10,
+            sl.VIDEO_SETTINGS.EXPOSURE: 90
         }
     
     @staticmethod
