@@ -568,11 +568,11 @@ class VideoSettingsDialog(QDialog):
         return {
             sl.VIDEO_SETTINGS.BRIGHTNESS: 4,
             sl.VIDEO_SETTINGS.CONTRAST: 4,
-            sl.VIDEO_SETTINGS.HUE: 4,
+            sl.VIDEO_SETTINGS.HUE: 0,
             sl.VIDEO_SETTINGS.SATURATION: 4,
             sl.VIDEO_SETTINGS.SHARPNESS: 4,
             sl.VIDEO_SETTINGS.GAMMA: 4,
-            sl.VIDEO_SETTINGS.WHITEBALANCE_TEMPERATURE: 0,
+            sl.VIDEO_SETTINGS.WHITEBALANCE_TEMPERATURE: 4600,
             sl.VIDEO_SETTINGS.WHITEBALANCE_AUTO: 1,
             sl.VIDEO_SETTINGS.GAIN: -1,
             sl.VIDEO_SETTINGS.EXPOSURE: -1
