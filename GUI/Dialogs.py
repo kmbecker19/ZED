@@ -407,6 +407,8 @@ class VideoSettingsDialog(QDialog):
         gain_value = QLabel(str(self.gain_slider.value()))
         self.gain_auto_checkbox = QCheckBox("Auto")
         self.gain_auto_checkbox.stateChanged.connect(self.toggle_auto_gain)
+        # Link gain and exposure check boxes
+        self.gain_auto_checkbox.stateChanged.connect(lambda: self.exposure_auto_checkbox.setChecked(self.gain_auto_checkbox.isChecked()))
 
         # Exposure
         exposure_label = QLabel("Exposure:")
@@ -417,6 +419,17 @@ class VideoSettingsDialog(QDialog):
         self.exposure_slider.valueChanged.connect(lambda: self.update_label(self.exposure_slider, exposure_value))
         self.exposure_auto_checkbox = QCheckBox("Auto")
         self.exposure_auto_checkbox.stateChanged.connect(self.toggle_auto_exposure)
+        # Link gain and exposure check boxes
+        self.exposure_auto_checkbox.stateChanged.connect(lambda: self.gain_auto_checkbox.setChecked(self.exposure_auto_checkbox.isChecked()))
+
+        # Set the auto checkboxes
+        if video_settings[sl.VIDEO_SETTINGS.WHITEBALANCE_AUTO] == 1:
+            self.white_balance_auto_checkbox.setChecked(True)
+        
+        # Gain and exposure are linked; they are both Auto or Manual
+        if video_settings[sl.VIDEO_SETTINGS.GAIN] == -1 or video_settings[sl.VIDEO_SETTINGS.EXPOSURE] == -1:
+            self.gain_auto_checkbox.setChecked(True)
+            self.exposure_auto_checkbox.setChecked(True)
 
         # Button Box
         QBtn = QDialogButtonBox.Apply | QDialogButtonBox.Cancel
@@ -457,7 +470,7 @@ class VideoSettingsDialog(QDialog):
         layout.addWidget(self.gain_auto_checkbox, 7, 3)
         layout.addWidget(exposure_label, 8, 0)
         layout.addWidget(self.exposure_slider, 8, 1)
-        layout.addWidget(exposure_label, 8, 2)
+        layout.addWidget(exposure_value, 8, 2)
         layout.addWidget(self.exposure_auto_checkbox, 8, 3)
     
         main_layout.addLayout(layout)
