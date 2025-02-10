@@ -323,10 +323,9 @@ class ZEDCameraApp(QMainWindow):
             NotImplementedError: If there is an exception while updating the video settings,
             this error is raised indicating that the update was not implemented successfully.
         """
-        print("Updating Video Settings")
-        print(str(new_params))
+        setting_mapping = VideoSettingsDialog.get_sl_mapping()
         for key, value in new_params.items():
-            status = self.zed.set_camera_settings(key, value)
+            status = self.zed.set_camera_settings(setting_mapping[key], value)
             if status == sl.ERROR_CODE.SUCCESS:
                 print(f"Updated {key} to {value}")
             else:
