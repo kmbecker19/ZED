@@ -309,19 +309,17 @@ class ZEDCameraApp(QMainWindow):
     @Slot(dict)
     def update_video_settings(self, new_params: Dict[str, float]):
         """
-        Updates the video settings of the ZED camera.
+        Update the video settings of the ZED camera.
 
-        This method takes a dictionary of video settings and their corresponding values,
-        and applies these settings to the ZED camera.
+        This method updates the video settings of the ZED camera based on the provided parameters.
+        It uses a mapping from the VideoSettingsDialog to set the appropriate camera settings.
 
         Args:
-            new_params (Dict[sl.VIDEO_SETTINGS, float]): A dictionary where the keys are
-            video settings (of type sl.VIDEO_SETTINGS) and the values are the desired
-            settings values (of type float).
+            new_params (Dict[str, float]): A dictionary containing the video settings to be updated.
+            The keys are the setting names, and the values are the corresponding setting values.
 
         Raises:
-            NotImplementedError: If there is an exception while updating the video settings,
-            this error is raised indicating that the update was not implemented successfully.
+            KeyError: If a key in new_params does not exist in the setting_mapping..
         """
         setting_mapping = VideoSettingsDialog.get_sl_mapping()
         for key, value in new_params.items():
