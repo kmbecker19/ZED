@@ -307,7 +307,7 @@ class RunTimeParamDialog(QDialog):
 class VideoSettingsDialog(QDialog):
     """
     A dialog for adjusting video settings.
-    
+
     This dialog allows the user to adjust the following video settings:
         - Brightness
         - Contrast
@@ -324,28 +324,40 @@ class VideoSettingsDialog(QDialog):
 
     Attributes:
         settings_changed (Signal): Signal emitted when the settings are changed.
-        video_settings (Dict[sl.VIDEO_SETTINGS, float]): Dictionary containing the current video settings.
-    
+        video_settings (dict): Dictionary to store the current video settings.
+        
     Methods:
+        update_label(sender, label): Updates the text of a QLabel with the value of the corresponding slider.
         toggle_auto_white_balance(): Toggles the auto white balance setting.
         toggle_auto_gain(): Toggles the auto gain setting.
         toggle_auto_exposure(): Toggles the auto exposure setting.
         apply_settings(): Applies the current settings from the sliders and checkboxes to the video settings.
-        get_default_settings() -> Dict[sl.VIDEO_SETTINGS, float]: Returns a dictionary of video settings with default values. (static method)
+        reset_settings(): Resets the video settings to their default values.
+
+    Static Methods:
+        get_default_settings(): Returns a dictionary of video settings with default values.
+        get_sl_mapping(): Returns a dictionary mapping between string keys and sl.VIDEO_SETTINGS enum values.
     """
     settings_changed = Signal(dict)
 
     def __init__(self, video_settings: Dict[sl.VIDEO_SETTINGS, float]):
+        """
+        Initializes the VideoSettingsDialog with the given video settings.
+
+        Uses a dictionary with sl.VIDEO_SETTINGS as an argument, though the settings are stored as strings
+        by the video_settings attribute.
+
+        Args:
+            video_settings (Dict[sl.VIDEO_SETTINGS, float]): Dictionary containing the current video settings.
+        """
         super().__init__()
         self.setWindowTitle("Video Settings")
         mapping = self.get_sl_mapping()
         self.video_settings = {}
-        # Set up Video Settings dictionary
+        # Set up Video Settings dictionary - convert sl.VIDEO_SETTINGS to strings
         for key, value in video_settings.items():
             if key in mapping:
                 self.video_settings[mapping[key]] = value
-        
-        pprint.pp(self.video_settings)
 
         # Brightness
         brightness_label = QLabel("Brightness:")
@@ -404,7 +416,6 @@ class VideoSettingsDialog(QDialog):
         self.white_balance_slider.valueChanged.connect(lambda: self.update_label(self.white_balance_slider, white_balance_value))
         self.white_balance_auto_checkbox = QCheckBox("Auto")
         self.white_balance_auto_checkbox.stateChanged.connect(self.toggle_auto_white_balance)
-        
 
         # Gain
         gain_label = QLabel("Gain:")
@@ -608,6 +619,16 @@ class VideoSettingsDialog(QDialog):
     
     @staticmethod
     def get_sl_mapping() -> Dict[Union[str, sl.VIDEO_SETTINGS], Union[sl.VIDEO_SETTINGS, str]]:
+        """
+        Returns a dictionary that maps video setting names to their corresponding sl.VIDEO_SETTINGS enum values and vice versa.
+
+        The dictionary contains mappings in both directions:
+        - From setting names (as strings) to sl.VIDEO_SETTINGS enum values.
+        - From sl.VIDEO_SETTINGS enum values to setting names (as strings).
+
+        Returns:
+            Dict[Union[str, sl.VIDEO_SETTINGS], Union[sl.VIDEO_SETTINGS, str]]: A dictionary with bidirectional mappings between setting names and sl.VIDEO_SETTINGS enum values.
+        """
         return {
             "Brightness": sl.VIDEO_SETTINGS.BRIGHTNESS,
             "Contrast": sl.VIDEO_SETTINGS.CONTRAST,

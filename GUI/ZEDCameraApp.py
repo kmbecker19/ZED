@@ -307,7 +307,7 @@ class ZEDCameraApp(QMainWindow):
         dlg.exec()
 
     @Slot(dict)
-    def update_video_settings(self, new_params):
+    def update_video_settings(self, new_params: Dict[str, float]):
         """
         Updates the video settings of the ZED camera.
 
