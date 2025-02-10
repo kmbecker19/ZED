@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QGridLayout, QLabel, QLineEdit, QVBoxLayout, QComboBox, QDialog, QDialogButtonBox, QSlider, QCheckBox
+from PySide6.QtWidgets import QGridLayout, QLabel, QLineEdit, QVBoxLayout, QComboBox, QDialog, QDialogButtonBox, QSlider, QCheckBox, QWidget
 from PySide6.QtCore import Signal, QTimer, Qt
 import pyzed.sl as sl
 from typing import Dict
@@ -345,6 +345,7 @@ class VideoSettingsDialog(QDialog):
         self.brightness_slider.setRange(0, 8)
         self.brightness_slider.setValue(video_settings[sl.VIDEO_SETTINGS.BRIGHTNESS])
         brightness_value = QLabel(str(self.brightness_slider.value()))
+        self.brightness_slider.valueChanged.connect(lambda: self.update_label(self.brightness_slider, brightness_value))
 
         # Contrast
         contrast_label = QLabel("Contrast:")
@@ -352,6 +353,7 @@ class VideoSettingsDialog(QDialog):
         self.contrast_slider.setRange(0, 8)
         self.contrast_slider.setValue(video_settings[sl.VIDEO_SETTINGS.CONTRAST])
         contrast_value = QLabel(str(self.contrast_slider.value()))
+        self.contrast_slider.valueChanged.connect(lambda: self.update_label(self.contrast_slider, contrast_value))
 
         # Hue
         hue_label = QLabel("Hue:")
@@ -359,6 +361,7 @@ class VideoSettingsDialog(QDialog):
         self.hue_slider.setRange(0, 11)
         self.hue_slider.setValue(video_settings[sl.VIDEO_SETTINGS.HUE])
         hue_value = QLabel(str(self.hue_slider.value()))
+        self.hue_slider.valueChanged.connect(lambda: self.update_label(self.hue_slider, hue_value))
 
         # Saturation
         saturation_label = QLabel("Saturation:")
@@ -366,6 +369,7 @@ class VideoSettingsDialog(QDialog):
         self.saturation_slider.setRange(0, 8)
         self.saturation_slider.setValue(video_settings[sl.VIDEO_SETTINGS.SATURATION])
         saturation_value = QLabel(str(self.saturation_slider.value()))
+        self.saturation_slider.valueChanged.connect(lambda: self.update_label(self.saturation_slider, saturation_value))
 
         # Sharpness
         sharpness_label = QLabel("Sharpness:")
@@ -373,6 +377,7 @@ class VideoSettingsDialog(QDialog):
         self.sharpness_slider.setRange(0, 8)
         self.sharpness_slider.setValue(video_settings[sl.VIDEO_SETTINGS.SHARPNESS])
         sharpness_value = QLabel(str(self.sharpness_slider.value()))
+        self.sharpness_slider.valueChanged.connect(lambda: self.update_label(self.sharpness_slider, sharpness_value))
 
         # Gamma
         gamma_label = QLabel("Gamma:")
@@ -380,6 +385,7 @@ class VideoSettingsDialog(QDialog):
         self.gamma_slider.setRange(0, 8)
         self.gamma_slider.setValue(video_settings[sl.VIDEO_SETTINGS.GAMMA])
         gamma_value = QLabel(str(self.gamma_slider.value()))
+        self.gamma_slider.valueChanged.connect(lambda: self.update_label(self.gamma_slider, gamma_value))
 
         # White Balance
         white_balance_label = QLabel("White Balance:")
@@ -387,14 +393,17 @@ class VideoSettingsDialog(QDialog):
         self.white_balance_slider.setRange(2800, 6500)
         self.white_balance_slider.setValue(video_settings[sl.VIDEO_SETTINGS.WHITEBALANCE_TEMPERATURE])
         white_balance_value = QLabel(str(self.white_balance_slider.value()))
+        self.white_balance_slider.valueChanged.connect(lambda: self.update_label(self.white_balance_slider, white_balance_value))
         self.white_balance_auto_checkbox = QCheckBox("Auto")
         self.white_balance_auto_checkbox.stateChanged.connect(self.toggle_auto_white_balance)
+        
 
         # Gain
         gain_label = QLabel("Gain:")
         self.gain_slider = QSlider(Qt.Orientation.Horizontal)
         self.gain_slider.setRange(0, 100)
         self.gain_slider.setValue(video_settings[sl.VIDEO_SETTINGS.GAIN])
+        self.gain_slider.valueChanged.connect(lambda: self.update_label(self.gain_slider, gain_value))
         gain_value = QLabel(str(self.gain_slider.value()))
         self.gain_auto_checkbox = QCheckBox("Auto")
         self.gain_auto_checkbox.stateChanged.connect(self.toggle_auto_gain)
@@ -404,6 +413,7 @@ class VideoSettingsDialog(QDialog):
         self.exposure_slider = QSlider(Qt.Orientation.Horizontal)
         self.exposure_slider.setRange(0, 100)
         self.exposure_slider.setValue(video_settings[sl.VIDEO_SETTINGS.EXPOSURE])
+        self.exposure_slider.valueChanged.connect(lambda: self.update_label(self.exposure_slider, exposure_label))
         exposure_label = QLabel(str(self.exposure_slider.value()))
         self.exposure_auto_checkbox = QCheckBox("Auto")
         self.exposure_auto_checkbox.stateChanged.connect(self.toggle_auto_exposure)
@@ -454,14 +464,14 @@ class VideoSettingsDialog(QDialog):
         main_layout.addWidget(self.buttonBox)
         self.setLayout(main_layout)
 
-    def update_label(self, label: QLabel):
+    def update_label(self, sender: QWidget, label: QLabel):
         """
         Update the text of a QLabel with the value of the corresponding slider.
 
         Args:
             label (QLabel): The label to be updated.
         """
-        label.setText(str(self.sender().value()))
+        label.setText(str(sender.value()))
 
     def toggle_auto_white_balance(self):
         """
