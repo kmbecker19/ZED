@@ -2,7 +2,6 @@ from PySide6.QtWidgets import QGridLayout, QLabel, QLineEdit, QVBoxLayout, QComb
 from PySide6.QtCore import Signal, QTimer, Qt
 import pyzed.sl as sl
 from typing import Dict, Union
-import pprint
 
 
 class MessageDialog(QDialog):
@@ -223,7 +222,6 @@ class RunTimeParamDialog(QDialog):
         apply_settings():
             Applies the settings from the dialog to the runtime parameters and emits the settings_changed signal.
     """
-
     settings_changed = Signal(sl.RuntimeParameters)
 
     def __init__(self, params: sl.RuntimeParameters):
@@ -596,7 +594,6 @@ class VideoSettingsDialog(QDialog):
         self.white_balance_auto_checkbox.setChecked(default_settings[sl.VIDEO_SETTINGS.WHITEBALANCE_AUTO] == 1)
         self.gain_auto_checkbox.setChecked(default_settings[sl.VIDEO_SETTINGS.GAIN] == -1)
         self.exposure_auto_checkbox.setChecked(default_settings[sl.VIDEO_SETTINGS.EXPOSURE] == -1)
-
 
     @staticmethod
     def get_default_settings() -> Dict[sl.VIDEO_SETTINGS, float]:

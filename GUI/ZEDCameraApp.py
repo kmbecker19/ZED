@@ -3,13 +3,13 @@ import numpy as np
 import pyzed.sl as sl
 import cv2
 import json
-from PySide6.QtWidgets import QApplication, QComboBox, QStatusBar, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar, QHBoxLayout
+from PySide6.QtWidgets import QApplication, QComboBox, QFileDialog, QMainWindow, QLabel, QPushButton, QVBoxLayout, QWidget, QLineEdit, QToolBar, QHBoxLayout
 from PySide6.QtCore import QTimer, Qt, Slot
 from PySide6.QtGui import QImage, QPixmap, QAction
 from pathlib import Path
 from Dialogs import CameraSettingsDialog, ImageSavedDialog, RunTimeParamDialog, AutoCloseDialog, VideoSettingsDialog
 from Utils import sobel_filter, param2dict
-from typing import Dict, Union
+from typing import Dict
 
 
 class ZEDCameraApp(QMainWindow):
