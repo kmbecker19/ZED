@@ -330,6 +330,8 @@ class ZEDCameraApp(QMainWindow):
                 print(f"Updated {key} to {value}")
             else:
                 print(f"Failed to update {key} to {value}")
+        dlg = AutoCloseDialog("Video Settings Updated", duration=1000)
+        dlg.exec()
     
     def cv_to_qt(self, cv_image) -> QPixmap:
         """
