@@ -568,6 +568,8 @@ class VideoSettingsDialog(QDialog):
             if not self.gain_auto_checkbox.isChecked() else -1
         self.video_settings["Exposure"] = self.exposure_slider.value() \
             if not self.exposure_auto_checkbox.isChecked() else -1
+        # Handle Auto White Balance
+        self.video_settings["White Balance Auto"] = 1 if self.white_balance_auto_checkbox.isChecked() else 0
         
         self.settings_changed.emit(self.video_settings)
 
