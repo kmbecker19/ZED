@@ -379,9 +379,9 @@ class VideoSettingsDialog(QDialog):
         white_balance_label = QLabel("White Balance:")
         self.white_balance_slider = QSlider()
         self.white_balance_slider.setRange(2800, 6500)
-        self.white_balance_slider.setValue(video_settings[sl.VIDEO_SETTINGS.WHITEBALANCE])
+        self.white_balance_slider.setValue(video_settings[sl.VIDEO_SETTINGS.WHITEBALANCE_TEMPERATURE])
         self.white_balance_auto_checkbox = QCheckBox("Auto")
-        self.white_balance_auto_checkbox.checkStateChanged.connect(self.toggle_auto_white_balance)
+        self.white_balance_auto_checkbox.stateChanged.connect(self.toggle_auto_white_balance)
 
         # Gain
         gain_label = QLabel("Gain:")
@@ -389,7 +389,7 @@ class VideoSettingsDialog(QDialog):
         self.gain_slider.setRange(0, 100)
         self.gain_slider.setValue(video_settings[sl.VIDEO_SETTINGS.GAIN])
         self.gain_auto_checkbox = QCheckBox("Auto")
-        self.gain_auto_checkbox.checkStateChanged.connect(self.toggle_auto_gain)
+        self.gain_auto_checkbox.stateChanged.connect(self.toggle_auto_gain)
 
         # Exposure
         exposure_label = QLabel("Exposure:")
@@ -397,7 +397,7 @@ class VideoSettingsDialog(QDialog):
         self.exposure_slider.setRange(0, 100)
         self.exposure_slider.setValue(video_settings[sl.VIDEO_SETTINGS.EXPOSURE])
         self.exposure_auto_checkbox = QCheckBox("Auto")
-        self.exposure_auto_checkbox.checkStateChanged.connect(self.toggle_auto_exposure)
+        self.exposure_auto_checkbox.stateChanged.connect(self.toggle_auto_exposure)
 
         # Button Box
         QBtn = QDialogButtonBox.Apply | QDialogButtonBox.Cancel
@@ -489,12 +489,12 @@ class VideoSettingsDialog(QDialog):
         self.video_settings[sl.VIDEO_SETTINGS.GAMMA] = self.gamma_slider.value()
 
         # Change these settings to AUTO if the corresponding checkbox is checked
-        self.video_settings[sl.VIDEO_SETTINGS.WHITEBALANCE] = self.white_balance_slider.value() \
-            if not self.white_balance_auto_checkbox.isChecked() else sl.VIDEO_SETTINGS_VALUE_AUTO
+        self.video_settings[sl.VIDEO_SETTINGS.WHITEBALANCE_TEMPERATURE] = self.white_balance_slider.value() \
+            if not self.white_balance_auto_checkbox.isChecked() else -1
         self.video_settings[sl.VIDEO_SETTINGS.GAIN] = self.gain_slider.value() \
-            if not self.gain_auto_checkbox.isChecked() else sl.VIDEO_SETTINGS_VALUE_AUTO
+            if not self.gain_auto_checkbox.isChecked() else -1
         self.video_settings[sl.VIDEO_SETTINGS.EXPOSURE] = self.exposure_slider.value() \
-            if not self.exposure_auto_checkbox.isChecked() else sl.VIDEO_SETTINGS_VALUE_AUTO
+            if not self.exposure_auto_checkbox.isChecked() else -1
         
         self.settings_changed.emit(self.video_settings)
 
@@ -513,9 +513,10 @@ class VideoSettingsDialog(QDialog):
             sl.VIDEO_SETTINGS.SATURATION: 4,
             sl.VIDEO_SETTINGS.SHARPNESS: 4,
             sl.VIDEO_SETTINGS.GAMMA: 4,
-            sl.VIDEO_SETTINGS.WHITEBALANCE: sl.VIDEO_SETTINGS_VALUE_AUTO,
-            sl.VIDEO_SETTINGS.GAIN: sl.VIDEO_SETTINGS_VALUE_AUTO,
-            sl.VIDEO_SETTINGS.EXPOSURE: sl.VIDEO_SETTINGS_VALUE_AUTO
+            sl.VIDEO_SETTINGS.WHITEBALANCE_TEMPERATURE: 0,
+            sl.VIDEO_SETTINGS.WHITEBALANCE_AUTO: 1,
+            sl.VIDEO_SETTINGS.GAIN: -1,
+            sl.VIDEO_SETTINGS.EXPOSURE: -1
         }
 
         

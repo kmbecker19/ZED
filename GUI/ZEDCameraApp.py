@@ -297,15 +297,16 @@ class ZEDCameraApp(QMainWindow):
         """
         # Get Current Video settings from camera
         settings = VideoSettingsDialog.get_default_settings()
-        for key, value in settings.items():
-            settings[key] = self.zed.getCameraSettings(key)
+        for key, _ in settings.items():
+            status, new_value = self.zed.get_camera_settings(key)
+            settings[key] = new_value
         
         # Open Dialog with current video settings
         dlg = VideoSettingsDialog(settings)
         dlg.settings_changed.connect(self.update_video_settings)
         dlg.exec()
 
-    @Slot(Dict[sl.VIDEO_SETTINGS, float])
+    @Slot(dict)
     def update_video_settings(self, new_params: Dict[sl.VIDEO_SETTINGS, float]):
         """
         Updates the video settings of the ZED camera.
@@ -324,7 +325,7 @@ class ZEDCameraApp(QMainWindow):
         """
         try:
             for key, value in new_params.items():
-                self.zed.setCameraSettings(key, value)
+                self.zed.set_camera_settings(key, value)
         except Exception as e:
             print("Encountered Exception while updating video settings: ", e)
             raise NotImplementedError("Video Settings Update not implemented successfully yet")
