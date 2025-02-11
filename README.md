@@ -63,6 +63,15 @@ The interface has the following components:
 
 ### Image Capture
 
+To capture an image, perform the following steps:
+
+1. **Choose a Subject folder using the "Choose..." button.** This will determine the folder that the image gets saved into, as well as the naming of the image.
+2. **Enter an Image name into the "Name" field.** This should be something like "shirt_vest" or "shirt_neg" that identifies what condition the image is being taken under.
+3. **Ensure the counter is at the correct value.** Click the "Reset" button to reset the counter to 1 for each new imaging condition.
+4. **Change Camera settings if desired.** The camera settings should remain consistent across sessions, but can be altered in certain circumstances.
+5. **Press "Save Image and Depth Map" to capture images.** This will save the images into the subject folder and give you a pop-up confirming that the images have been succesfully saved. You can also capture an image at any time by pressing the **Enter** key.
+
+Each image will be saved with the naming format `<SUBJECT>_<NAME>_<COUNTER>`.
 When you capture an image using this program, the following files will be saved into
 your subject folder:
 
