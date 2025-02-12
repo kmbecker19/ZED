@@ -80,3 +80,34 @@ your subject folder:
 - **2 Metadata Files** in text and JSON format containing the name, resolution,
 description, and timestamp of the image, along with the camera settings and runtime
 parameters.
+
+
+### Parameters Tested
+
+In our tests, we used the following parameters:
+
+- **Camera**
+- - *Resolution*: 2K
+- - *FPS*: 15
+- - *Depth Mode*: Ultra
+- - *Coordinate Units*: Millimeters
+- - *Min. Distance*: 2010
+- - *Max. Distance*: 2520
+- **Video**
+- - *Brightness*: 4
+- - *Contrast*: 4
+- - *Hue*: 0
+- - *Saturation*: 4
+- - *Sharpness*: 4
+- - *Gamma**: 5
+- - *White Balance*: 4700
+- - *Gain*: 97
+- - *Exposure*: 91
+- **Runtime**
+- - *Fill*: FALSE
+- - *Confidence Threshold*: 100
+- - *Texture Threshold*: 100
+- **Room Parameters**
+- - Lights on and dimmed
+
+
