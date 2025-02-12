@@ -51,15 +51,20 @@ class ZEDCameraApp(QMainWindow):
         self.runtime_params = sl.RuntimeParameters(enable_fill_mode=False)
         camera_info = self.zed.get_camera_information()
         self.image_size = camera_info.camera_configuration.resolution
-        self.image_size.width //= 2
-        self.image_size.height //= 2
+        self.display_size = camera_info.camera_configuration.resolution
+        self.display_size.width //= 2
+        self.display_size.height //= 2
 
-        # Prepare Mat objects
-        self.image_zed = sl.Mat(self.image_size.width, self.image_size.height, sl.MAT_TYPE.U8_C4)
-        self.depth_image_zed = sl.Mat(self.image_size.width, self.image_size.height, sl.MAT_TYPE.U8_C4)
+        # Prepare Mat objects for displaying images
+        self.image_zed = sl.Mat(self.display_size.width, self.display_size.height, sl.MAT_TYPE.U8_C4)
+        self.depth_image_zed = sl.Mat(self.display_size.width, self.display_size.height, sl.MAT_TYPE.U8_C4)
         # For Raw depth data
-        self.depth_map_zed = sl.Mat(self.image_size.width, self.image_size.height)
+        self.depth_map_zed = sl.Mat()
         self.point_cloud_zed = sl.Mat()
+
+        # Mat objects for saving images
+        self.rgb_image = sl.Mat(self.image_size.width, self.image_size.height, sl.MAT_TYPE.U8_C4)
+        self.depth_map_image = sl.Mat(self.image_size.width, self.image_size.height, sl.MAT_TYPE.U8_C4)
 
         # GUI Elements - Image Display and save button
         self.image_label = QLabel("Camera Feed")
@@ -194,10 +199,12 @@ class ZEDCameraApp(QMainWindow):
         """
         if self.zed.grab(self.runtime_params) == sl.ERROR_CODE.SUCCESS:
             # Retrieve images
-            self.zed.retrieve_image(self.image_zed, sl.VIEW.LEFT, sl.MEM.CPU, self.image_size)
-            self.zed.retrieve_image(self.depth_image_zed, sl.VIEW.DEPTH, sl.MEM.CPU, self.image_size)
+            self.zed.retrieve_image(self.image_zed, sl.VIEW.LEFT, sl.MEM.CPU, self.display_size)
+            self.zed.retrieve_image(self.depth_image_zed, sl.VIEW.DEPTH, sl.MEM.CPU, self.display_size)
             self.zed.retrieve_measure(self.depth_map_zed, sl.MEASURE.DEPTH)
             self.zed.retrieve_measure(self.point_cloud_zed, sl.MEASURE.XYZRGBA)
+            self.zed.retrieve_image(self.rgb_image, sl.VIEW.LEFT, sl.MEM.CPU, self.image_size)
+            self.zed.retrieve_image(self.depth_map_image, sl.VIEW.DEPTH, sl.MEM.CPU, self.image_size)
             self.timestamp = self.zed.get_timestamp(sl.TIME_REFERENCE.IMAGE)
 
             # Convert to OpenCV format
@@ -356,8 +363,8 @@ class ZEDCameraApp(QMainWindow):
         a predefined naming convention, and the save folder is created if it does not exist.
         """
         # Save image and depth map
-        image_rgb = self.image_zed.get_data()
-        image_depth = self.depth_image_zed.get_data()
+        image_rgb = self.rgb_image.get_data()
+        image_depth = self.depth_map_image.get_data()
         depth_map = self.depth_map_zed.get_data()
         point_cloud = self.point_cloud_zed.get_data()
 
