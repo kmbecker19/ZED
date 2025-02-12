@@ -262,6 +262,9 @@ class ZEDCameraApp(QMainWindow):
         if self.zed.open(self.init) != sl.ERROR_CODE.SUCCESS:
             print("Failed to open ZED camera with updated settings.")
             sys.exit(1)
+        # Update Resolution settings for GUI
+        camera_info = self.zed.get_camera_information()
+        self.image_size = camera_info.camera_configuration.resolution
         dlg = AutoCloseDialog("Camera Settings Updated")
         dlg.exec()
 
