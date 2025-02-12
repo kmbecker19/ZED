@@ -138,7 +138,7 @@ class CameraSettingsDialog(QDialog):
         self.min_distance_box = QLineEdit(f"{init_params.depth_minimum_distance}")
 
         # Maximum Distance
-        max_distance_label = QLabel("Minimum Distance:")
+        max_distance_label = QLabel("Maximum Distance:")
         self.max_distance_box = QLineEdit(f"{init_params.depth_maximum_distance}")
 
         # Apply Settings Button
