@@ -81,33 +81,38 @@ your subject folder:
 description, and timestamp of the image, along with the camera settings and runtime
 parameters.
 
+### Pushing Images to Server
+
+Kyle has created a Powershell command to push a directory of images to the server. After images are captured, use the following command to push the data files into the `/data/COD_Depth` folder:
+
+```powershell
+Push-DepthData -Path "C:\Your\Directory\Path"
+```
 
 ### Parameters Tested
 
 In our tests, we used the following parameters:
 
 - **Camera**
-- - *Resolution*: 2K
-- - *FPS*: 15
-- - *Depth Mode*: Ultra
-- - *Coordinate Units*: Millimeters
-- - *Min. Distance*: 2010
-- - *Max. Distance*: 2520
+  - *Resolution*: 2K
+  - *FPS*: 15
+  - *Depth Mode*: Ultra
+  - *Coordinate Units*: Millimeters
+  - *Min. Distance*: 2010
+  - *Max. Distance*: 2520
 - **Video**
-- - *Brightness*: 4
-- - *Contrast*: 4
-- - *Hue*: 0
-- - *Saturation*: 4
-- - *Sharpness*: 4
-- - *Gamma**: 5
-- - *White Balance*: 4700
-- - *Gain*: 97
-- - *Exposure*: 91
+  - *Brightness*: 4
+  - *Contrast*: 4
+  - *Hue*: 0
+  - *Saturation*: 4
+  - *Sharpness*: 4
+  - *Gamma**: 5
+  - *White Balance*: 4700
+  - *Gain*: 97
+  - *Exposure*: 91
 - **Runtime**
-- - *Fill*: FALSE
-- - *Confidence Threshold*: 100
-- - *Texture Threshold*: 100
+  - *Fill*: FALSE
+  - *Confidence Threshold*: 100
+  - *Texture Threshold*: 100
 - **Room Parameters**
-- - Lights on and dimmed
-
-
+  - Lights on and dimmed
